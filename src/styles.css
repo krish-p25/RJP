@@ -139,9 +139,13 @@ p {
 
 h1 {
   font-size: clamp(2rem, 5vw, 3.8rem);
-  line-height: 1.05;
-  max-width: 11ch;
+  line-height: 1.08;
+  max-width: 20ch;
   margin-bottom: 1rem;
+}
+
+.hero-title-line {
+  display: block;
 }
 
 .lead {
@@ -220,9 +224,17 @@ h1 {
 .split {
   display: flex;
   flex-wrap: wrap;
-  align-items: end;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.split h2 {
+  margin-bottom: 0;
+}
+
+.split .toggle-group {
+  transform: translateY(0.45rem);
 }
 
 .process-grid {
@@ -442,6 +454,7 @@ h1 {
   .toggle-group {
     width: 100%;
     justify-content: space-between;
+    transform: none;
   }
 
   .toggle-btn {
