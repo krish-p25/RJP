@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react"
 import { imageManifest } from "./imageManifest";
 
 type Category = "finishes" | "works";
@@ -7,6 +7,7 @@ type Category = "finishes" | "works";
 type GalleryImage = {
   src: string;
   caption: string;
+  alt: string;
 };
 
 function mapToGallery(list: string[], category: Category): GalleryImage[] {
@@ -15,7 +16,11 @@ function mapToGallery(list: string[], category: Category): GalleryImage[] {
     caption:
       category === "finishes"
         ? `Finished Project ${String(index + 1).padStart(2, "0")}`
-        : `Construction Work ${String(index + 1).padStart(2, "0")}`
+        : `Construction Work ${String(index + 1).padStart(2, "0")}`,
+    alt:
+      category === "finishes"
+        ? `Completed property renovation and finishing project ${String(index + 1).padStart(2, "0")} by RJP Innovations`
+        : `Building and renovation construction process image ${String(index + 1).padStart(2, "0")} by RJP Innovations`
   }));
 }
 
@@ -92,9 +97,9 @@ function App() {
 
   return (
     <>
+      <Analytics />
       <div className="bg-orb bg-orb-a" />
       <div className="bg-orb bg-orb-b" />
-      <Analytics />
 
       <header className={`site-header ${isScrolled ? "island" : ""}`}>
         <a href="#" className="brand">
@@ -108,11 +113,11 @@ function App() {
 
       <main>
         <section className="hero reveal">
-          <p className="eyebrow">Property Developer & Contractor Agency</p>
-          <h1>From Structural Execution to Signature Finishes</h1>
+          <p className="eyebrow">Building Contractor, Renovation & Property Development</p>
+          <h1>Building and Renovation Contractors Delivering End-to-End Property Development</h1>
           <p className="lead">
-            RJP Innovations delivers high-quality development projects with disciplined on-site management,
-            transparent delivery, and premium final outcomes.
+            RJP Innovations delivers high-quality home renovation, structural construction, and property
+            refurbishment projects with disciplined site management and premium finishes.
           </p>
           <div className="hero-actions">
             <a href="#portfolio" className="btn btn-primary">
@@ -140,24 +145,24 @@ function App() {
 
         <section id="process" className="section reveal">
           <div className="section-head">
-            <p className="eyebrow">How We Build</p>
-            <h2>Our Delivery Workflow</h2>
+            <p className="eyebrow">Construction & Renovation Services</p>
+            <h2>Residential Building Services We Deliver</h2>
           </div>
           <div className="process-grid">
             <article className="process-card">
               <span>01</span>
-              <h3>Site Assessment</h3>
-              <p>We evaluate the site, define scope, and establish practical timelines with cost clarity.</p>
+              <h3>Home Renovation Planning</h3>
+              <p>We assess your property, define renovation scope, and build a practical delivery plan.</p>
             </article>
             <article className="process-card">
               <span>02</span>
-              <h3>Construction Execution</h3>
-              <p>Our team manages structure, materials, and progress tracking with strict quality checks.</p>
+              <h3>Structural Building Works</h3>
+              <p>Our contractors manage construction works, material quality, and milestone tracking.</p>
             </article>
             <article className="process-card">
               <span>03</span>
-              <h3>Premium Finishing</h3>
-              <p>Final detailing is delivered to elevate both function and visual impact of each property.</p>
+              <h3>Refurbishment & Finishing</h3>
+              <p>We complete premium interior and exterior finishes to elevate long-term property value.</p>
             </article>
           </div>
         </section>
@@ -201,7 +206,7 @@ function App() {
             >
               {finishImages.map((image) => (
                 <figure className="card" key={image.src} onClick={() => setLightbox(image)}>
-                  <img loading="lazy" src={image.src} alt={image.caption} onLoad={handleImageLoad} />
+                  <img loading="lazy" src={image.src} alt={image.alt} onLoad={handleImageLoad} />
                   <figcaption>{image.caption}</figcaption>
                 </figure>
               ))}
@@ -215,7 +220,7 @@ function App() {
                   <img
                     loading="lazy"
                     src={image.src}
-                    alt={image.caption}
+                    alt={image.alt}
                     className="work-image"
                     onLoad={handleImageLoad}
                   />
