@@ -114,7 +114,10 @@ function App() {
       <main>
         <section className="hero reveal">
           <p className="eyebrow">Building Contractor, Renovation & Property Development</p>
-          <h1>Building and Renovation Contractors Delivering End-to-End Property Development</h1>
+          <h1>
+            <span className="hero-title-line">Built Perfect.</span>
+            <span className="hero-title-line">Finished Better.</span>
+          </h1>
           <p className="lead">
             RJP Innovations delivers high-quality home renovation, structural construction, and property
             refurbishment projects with disciplined site management and premium finishes.
@@ -157,7 +160,7 @@ function App() {
             <article className="process-card">
               <span>02</span>
               <h3>Structural Building Works</h3>
-              <p>Our contractors manage construction works, material quality, and milestone tracking.</p>
+              <p>We manage construction works, material quality, and milestone tracking in house, ensuring a high quality of work.</p>
             </article>
             <article className="process-card">
               <span>03</span>
