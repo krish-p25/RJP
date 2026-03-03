@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/react";
 import { imageManifest } from "./imageManifest";
 
 type Category = "finishes" | "works";
@@ -98,87 +98,105 @@ function App() {
   return (
     <>
       <Analytics />
-      <div className="bg-orb bg-orb-a" />
-      <div className="bg-orb bg-orb-b" />
+      <div className="fixed -left-20 top-24 -z-10 h-80 w-80 rounded-full bg-[#b69bff] opacity-35 blur-[70px]" />
+      <div className="fixed -right-28 -bottom-10 -z-10 h-[360px] w-[360px] rounded-full bg-[#d2beff] opacity-35 blur-[70px]" />
 
-      <header className={`site-header ${isScrolled ? "island" : ""}`}>
-        <a href="#" className="brand">
+      <header
+        className={[
+          "fixed z-20 flex items-center justify-between border backdrop-blur-md transition-all duration-300",
+          isScrolled
+            ? "top-3 left-1/2 w-[calc(100%-1.4rem)] max-w-[1040px] -translate-x-1/2 rounded-full border-[#4f2ab733] bg-white/65 px-4 py-3 shadow-[0_14px_35px_rgba(30,14,59,0.16)] md:px-6 lg:px-10 max-[640px]:top-[0.55rem] max-[640px]:w-[calc(100%-0.8rem)]"
+            : "top-0 left-0 right-0 w-full rounded-none border-x-0 border-t-0 border-b-[#24183a24] bg-[#f8f6ffbf] px-4 py-4 md:px-6 lg:px-12"
+        ].join(" ")}
+      >
+        <a href="#" className="text-base font-extrabold tracking-[0.02em] text-[#24183a] no-underline">
           RJP Innovations
         </a>
-        <nav>
-          <a href="#portfolio">Portfolio</a>
-          <a href="#contact">Contact</a>
+        <nav className="flex gap-4 max-[640px]:gap-2.5">
+          <a href="#portfolio" className="text-sm font-semibold text-[#5d4e79] no-underline max-[640px]:text-[0.88rem]">
+            Portfolio
+          </a>
+          <a href="#contact" className="text-sm font-semibold text-[#5d4e79] no-underline max-[640px]:text-[0.88rem]">
+            Contact
+          </a>
         </nav>
       </header>
 
-      <main>
-        <section className="hero reveal">
-          <p className="eyebrow">Building Contractor, Renovation & Property Development</p>
-          <h1>
-            <span className="hero-title-line">Built Perfect.</span>
-            <span className="hero-title-line">Finished Better.</span>
+      <main className="mx-auto w-[min(1100px,calc(100%-2rem))] pb-12 pt-[clamp(3.8rem,5.8vw,4.4rem)] max-[640px]:w-[calc(100%-1rem)] max-[640px]:pt-[3.4rem]">
+        <section className="reveal pb-0 pt-[clamp(3rem,7vw,6rem)] max-[640px]:pt-[1.1rem]">
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">
+            Building Contractor, Renovation & Property Development
+          </p>
+          <h1 className="mb-4 max-w-[20ch] text-[clamp(2rem,5vw,3.8rem)] font-extrabold leading-[1.08] text-[#24183a]">
+            <span className="block">Built Perfect.</span>
+            <span className="block">Finished Better.</span>
           </h1>
-          <p className="lead">
+          <p className="max-w-[60ch] text-[clamp(1rem,1.7vw,1.2rem)] text-[#5d4e79]">
             RJP Innovations delivers high-quality home renovation, structural construction, and property
             refurbishment projects with disciplined site management and premium finishes.
           </p>
-          <div className="hero-actions">
-            <a href="#portfolio" className="btn btn-primary">
+          <div className="my-6 flex flex-wrap gap-3">
+            <a
+              href="#portfolio"
+              className="inline-block rounded-full bg-[#6c3fe1] px-5 py-3 text-sm font-bold text-white no-underline transition-transform duration-200 hover:-translate-y-px hover:bg-[#4f2ab7]"
+            >
               View Portfolio
             </a>
-            <a href="#contact" className="btn btn-ghost">
+            <a
+              href="#contact"
+              className="inline-block rounded-full border border-[#24183a24] px-5 py-3 text-sm font-bold text-[#24183a] no-underline transition-transform duration-200 hover:-translate-y-px"
+            >
               Start a Project
             </a>
           </div>
-          <div className="stats-grid">
-            <article>
-              <h2>{finishImages.length}+</h2>
-              <p>Finished works showcased</p>
+        </section>
+
+        <section id="process" className="reveal mt-0 pt-[clamp(2rem,5vw,4rem)]">
+          <div>
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">
+              Construction & Renovation Services
+            </p>
+            <h2 className="mb-4 text-[clamp(1.4rem,2.8vw,2.2rem)] font-bold text-[#24183a]">
+              Residential Building Services We Deliver
+            </h2>
+          </div>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
+            <article className="rounded-[18px] border border-[#24183a24] bg-white p-5 shadow-[0_24px_60px_rgba(29,14,56,0.14)]">
+              <span className="text-sm font-extrabold text-[#4f2ab7]">01</span>
+              <h3 className="mb-2 mt-1 text-xl font-bold text-[#24183a]">Home Renovation Planning</h3>
+              <p className="text-[#5d4e79]">We assess your property, define renovation scope, and build a practical delivery plan.</p>
             </article>
-            <article>
-              <h2>{workImages.length}</h2>
-              <p>On-site execution snapshots</p>
+            <article className="rounded-[18px] border border-[#24183a24] bg-white p-5 shadow-[0_24px_60px_rgba(29,14,56,0.14)]">
+              <span className="text-sm font-extrabold text-[#4f2ab7]">02</span>
+              <h3 className="mb-2 mt-1 text-xl font-bold text-[#24183a]">Structural Building Works</h3>
+              <p className="text-[#5d4e79]">
+                We manage construction works, material quality, and milestone tracking in house, ensuring a high quality of work.
+              </p>
             </article>
-            <article>
-              <h2>End-to-end</h2>
-              <p>Planning, construction, and finishing</p>
+            <article className="rounded-[18px] border border-[#24183a24] bg-white p-5 shadow-[0_24px_60px_rgba(29,14,56,0.14)]">
+              <span className="text-sm font-extrabold text-[#4f2ab7]">03</span>
+              <h3 className="mb-2 mt-1 text-xl font-bold text-[#24183a]">Refurbishment & Finishing</h3>
+              <p className="text-[#5d4e79]">We complete premium interior and exterior finishes to elevate long-term property value.</p>
             </article>
           </div>
         </section>
 
-        <section id="process" className="section reveal">
-          <div className="section-head">
-            <p className="eyebrow">Construction & Renovation Services</p>
-            <h2>Residential Building Services We Deliver</h2>
-          </div>
-          <div className="process-grid">
-            <article className="process-card">
-              <span>01</span>
-              <h3>Home Renovation Planning</h3>
-              <p>We assess your property, define renovation scope, and build a practical delivery plan.</p>
-            </article>
-            <article className="process-card">
-              <span>02</span>
-              <h3>Structural Building Works</h3>
-              <p>We manage construction works, material quality, and milestone tracking in house, ensuring a high quality of work.</p>
-            </article>
-            <article className="process-card">
-              <span>03</span>
-              <h3>Refurbishment & Finishing</h3>
-              <p>We complete premium interior and exterior finishes to elevate long-term property value.</p>
-            </article>
-          </div>
-        </section>
-
-        <section id="portfolio" className="section reveal">
-          <div className="section-head split">
+        <section id="portfolio" className="reveal pt-[clamp(2rem,5vw,4rem)]">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="eyebrow">Portfolio</p>
-              <h2>Built Work Gallery</h2>
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">Portfolio</p>
+              <h2 className="mb-0 text-[clamp(1.4rem,2.8vw,2.2rem)] font-bold text-[#24183a]">Built Work Gallery</h2>
             </div>
-            <div className="toggle-group" role="tablist" aria-label="Portfolio category">
+            <div
+              className="flex translate-y-[0.45rem] gap-1 rounded-full bg-[#efe9ff] p-1 max-[640px]:w-full max-[640px]:translate-y-0 max-[640px]:justify-between"
+              role="tablist"
+              aria-label="Portfolio category"
+            >
               <button
-                className={`toggle-btn ${activeCategory === "finishes" ? "active" : ""}`}
+                className={[
+                  "cursor-pointer rounded-full border-0 px-4 py-2 text-sm font-bold",
+                  activeCategory === "finishes" ? "bg-white text-[#24183a]" : "bg-transparent text-[#5d4e79]"
+                ].join(" ")}
                 data-filter="finishes"
                 role="tab"
                 aria-selected={activeCategory === "finishes"}
@@ -187,7 +205,10 @@ function App() {
                 Finished Projects
               </button>
               <button
-                className={`toggle-btn ${activeCategory === "works" ? "active" : ""}`}
+                className={[
+                  "cursor-pointer rounded-full border-0 px-4 py-2 text-sm font-bold",
+                  activeCategory === "works" ? "bg-white text-[#24183a]" : "bg-transparent text-[#5d4e79]"
+                ].join(" ")}
                 data-filter="works"
                 role="tab"
                 aria-selected={activeCategory === "works"}
@@ -199,48 +220,72 @@ function App() {
           </div>
 
           <div
-            className="gallery-stage"
+            className="relative mt-5 overflow-hidden transition-[height] duration-[420ms] ease-[cubic-bezier(0.22,0.61,0.36,1)]"
             aria-live="polite"
             style={{ height: galleryHeight > 0 ? `${galleryHeight}px` : undefined }}
           >
             <div
               ref={finishesRef}
-              className={`gallery-grid gallery-panel ${activeCategory === "finishes" ? "active" : ""}`}
+              className={[
+                "absolute left-0 right-0 top-0 grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-3 transition-all duration-300 max-[640px]:grid-cols-2 max-[640px]:gap-[0.7rem]",
+                activeCategory === "finishes" ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+              ].join(" ")}
             >
               {finishImages.map((image) => (
-                <figure className="card" key={image.src} onClick={() => setLightbox(image)}>
-                  <img loading="lazy" src={image.src} alt={image.alt} onLoad={handleImageLoad} />
-                  <figcaption>{image.caption}</figcaption>
+                <figure
+                  className="m-0 cursor-pointer overflow-hidden rounded-[14px] border border-[#24183a24] bg-white shadow-[0_8px_24px_rgba(9,21,15,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(9,21,15,0.2)]"
+                  key={image.src}
+                  onClick={() => setLightbox(image)}
+                >
+                  <img
+                    loading="lazy"
+                    src={image.src}
+                    alt={image.alt}
+                    onLoad={handleImageLoad}
+                    className="block aspect-[4/3] w-full object-cover"
+                  />
+                  <figcaption className="px-3 py-3 text-[0.92rem] text-[#5d4e79]">{image.caption}</figcaption>
                 </figure>
               ))}
             </div>
             <div
               ref={worksRef}
-              className={`gallery-grid gallery-panel ${activeCategory === "works" ? "active" : ""}`}
+              className={[
+                "absolute left-0 right-0 top-0 grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-3 transition-all duration-300 max-[640px]:grid-cols-2 max-[640px]:gap-[0.7rem]",
+                activeCategory === "works" ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+              ].join(" ")}
             >
               {workImages.map((image) => (
-                <figure className="card" key={image.src} onClick={() => setLightbox(image)}>
+                <figure
+                  className="m-0 cursor-pointer overflow-hidden rounded-[14px] border border-[#24183a24] bg-white shadow-[0_8px_24px_rgba(9,21,15,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(9,21,15,0.2)]"
+                  key={image.src}
+                  onClick={() => setLightbox(image)}
+                >
                   <img
                     loading="lazy"
                     src={image.src}
                     alt={image.alt}
-                    className="work-image"
                     onLoad={handleImageLoad}
+                    className="block aspect-[4/3] w-full bg-[#f3efff] object-contain"
                   />
-                  <figcaption>{image.caption}</figcaption>
+                  <figcaption className="px-3 py-3 text-[0.92rem] text-[#5d4e79]">{image.caption}</figcaption>
                 </figure>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="contact" className="section reveal">
-          <div className="contact-card">
-            <p className="eyebrow">Let's Build</p>
-            <h2>Plan Your Next Development With RJP Innovations</h2>
-            <p>Share your project requirements and we'll guide you from concept to completion.</p>
+        <section id="contact" className="reveal pt-[clamp(2rem,5vw,4rem)]">
+          <div className="rounded-[18px] border border-[#24183a24] bg-gradient-to-br from-white to-[#f2ecff] p-[clamp(1.1rem,4vw,2rem)]">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">Let's Build</p>
+            <h2 className="mb-4 text-[clamp(1.4rem,2.8vw,2.2rem)] font-bold text-[#24183a]">
+              Plan Your Next Development With RJP Innovations
+            </h2>
+            <p className="mb-5 max-w-[54ch] text-[#5d4e79]">
+              Share your project requirements and we'll guide you from concept to completion.
+            </p>
             <a
-              className="btn btn-primary"
+              className="inline-block rounded-full bg-[#6c3fe1] px-5 py-3 text-sm font-bold text-white no-underline transition-transform duration-200 hover:-translate-y-px hover:bg-[#4f2ab7]"
               href="https://api.whatsapp.com/send/?phone=447957306323&text=Hi%2C%20I%27m%20looking%20for%20a%20quote%20for%20some%20work%20on%20my%20property.%20Could%20you%20let%20me%20know%20if%20you%27re%20available%20to%20discuss%3F&type=phone_number&app_absent=0"
               target="_blank"
               rel="noreferrer"
@@ -252,7 +297,10 @@ function App() {
       </main>
 
       <div
-        className={`lightbox ${lightbox ? "open" : ""}`}
+        className={[
+          "fixed inset-0 z-40 grid place-items-center bg-[rgba(6,9,8,0.86)] p-4 transition-opacity duration-200",
+          lightbox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        ].join(" ")}
         id="lightbox"
         aria-hidden={lightbox ? "false" : "true"}
         onClick={(event) => {
@@ -261,13 +309,21 @@ function App() {
           }
         }}
       >
-        <button className="lightbox-close" aria-label="Close image" onClick={() => setLightbox(null)}>
+        <button
+          className="absolute right-5 top-4 cursor-pointer border-0 bg-transparent text-5xl text-white"
+          aria-label="Close image"
+          onClick={() => setLightbox(null)}
+        >
           &times;
         </button>
         {lightbox && (
           <>
-            <img src={lightbox.src} alt={lightbox.caption} />
-            <p>{lightbox.caption}</p>
+            <img
+              src={lightbox.src}
+              alt={lightbox.caption}
+              className="max-h-[78vh] max-w-[min(980px,95vw)] rounded-[14px] shadow-[0_24px_55px_rgba(0,0,0,0.5)]"
+            />
+            <p className="mt-2 text-center text-[#e7ece8]">{lightbox.caption}</p>
           </>
         )}
       </div>
