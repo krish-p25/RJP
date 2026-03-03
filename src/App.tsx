@@ -29,6 +29,7 @@ function App() {
   const [lightbox, setLightbox] = useState<GalleryImage | null>(null);
   const [galleryHeight, setGalleryHeight] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isAboutExpanded, setIsAboutExpanded] = useState(false);
   const finishesRef = useRef<HTMLDivElement>(null);
   const worksRef = useRef<HTMLDivElement>(null);
 
@@ -103,10 +104,10 @@ function App() {
 
       <header
         className={[
-          "fixed z-20 flex items-center justify-between border backdrop-blur-md transition-all duration-300",
+          "fixed left-1/2 z-20 flex -translate-x-1/2 items-center justify-between border backdrop-blur-md transition-[top,width,padding,border-radius,background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)]",
           isScrolled
-            ? "top-3 left-1/2 w-[calc(100%-1.4rem)] max-w-[1040px] -translate-x-1/2 rounded-full border-[#4f2ab733] bg-white/65 px-4 py-3 shadow-[0_14px_35px_rgba(30,14,59,0.16)] md:px-6 lg:px-10 max-[640px]:top-[0.55rem] max-[640px]:w-[calc(100%-0.8rem)]"
-            : "top-0 left-0 right-0 w-full rounded-none border-x-0 border-t-0 border-b-[#24183a24] bg-[#f8f6ffbf] px-4 py-4 md:px-6 lg:px-12"
+            ? "top-3 w-[calc(100%-1.4rem)] max-w-[1040px] rounded-full border-[#4f2ab733] bg-white/65 px-4 py-3 shadow-[0_14px_35px_rgba(30,14,59,0.16)] md:px-6 lg:px-10 max-[640px]:top-[0.55rem] max-[640px]:w-[calc(100%-0.8rem)]"
+            : "top-0 w-full max-w-none rounded-none border-x-0 border-t-0 border-b-[#24183a24] bg-[#f8f6ffbf] px-4 py-4 shadow-none md:px-6 lg:px-12"
         ].join(" ")}
       >
         <a href="#" className="text-base font-extrabold tracking-[0.02em] text-[#24183a] no-underline">
@@ -131,10 +132,47 @@ function App() {
             <span className="block">Built Perfect.</span>
             <span className="block">Finished Better.</span>
           </h1>
-          <p className="max-w-[60ch] text-[clamp(1rem,1.7vw,1.2rem)] text-[#5d4e79]">
-            RJP Innovations delivers high-quality home renovation, structural construction, and property
-            refurbishment projects with disciplined site management and premium finishes.
-          </p>
+          <div className="max-w-[66ch] lg:max-w-full">
+            <div
+              className={[
+                "relative overflow-hidden text-[clamp(1rem,1.7vw,1.2rem)] text-[#5d4e79] transition-[max-height] duration-500 ease-[cubic-bezier(0.22,0.61,0.36,1)]",
+                isAboutExpanded ? "max-h-[120rem]" : "max-h-[10.5rem] about-collapse-mask"
+              ].join(" ")}
+            >
+              <p className="mb-4">
+                We believe great construction is about more than building - it&apos;s about creating spaces that
+                improve the way people live and work. Based in London, we specialise in high-quality renovation,
+                refurbishment, and building completion services, helping homeowners, landlords, and developers
+                transform properties with confidence.
+              </p>
+              <p className="mb-4">
+                Our team is passionate about delivering projects that combine craftsmanship, thoughtful design, and
+                lasting quality. From the earliest planning stages through to the final finishes, we take pride in
+                ensuring every detail is completed with care and professionalism. Whether it&apos;s a full property
+                renovation, an interior refurbishment, or external improvements, we approach every project with the
+                same commitment to excellence.
+              </p>
+              <p className="mb-4">
+                As a member of the Federation of Master Builders, we are proud to be recognised as part of one of the
+                UK&apos;s most respected construction organisations. This reflects our dedication to maintaining high
+                industry standards, delivering reliable workmanship, and providing a service our clients can trust.
+              </p>
+              <p className="mb-0">
+                We understand that every property project is a significant investment. That&apos;s why we focus on
+                clear communication, dependable timelines, and results that genuinely enhance both the value and
+                functionality of a space. Our goal is always to exceed expectations and leave our clients with a
+                finished project they can be proud of.
+              </p>
+            </div>
+            <button
+              type="button"
+              className="mt-2 cursor-pointer border-0 bg-transparent p-0 text-sm font-bold text-[#4f2ab7] transition-opacity duration-200 hover:opacity-75"
+              onClick={() => setIsAboutExpanded((current) => !current)}
+              aria-expanded={isAboutExpanded}
+            >
+              {isAboutExpanded ? "Read less" : "Read more"}
+            </button>
+          </div>
           <div className="my-6 flex flex-wrap gap-3">
             <a
               href="#portfolio"
@@ -146,7 +184,7 @@ function App() {
               href="#contact"
               className="inline-block rounded-full border border-[#24183a24] px-5 py-3 text-sm font-bold text-[#24183a] no-underline transition-transform duration-200 hover:-translate-y-px"
             >
-              Start a Project
+              Contac Us
             </a>
           </div>
         </section>
