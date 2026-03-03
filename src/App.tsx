@@ -10,9 +10,15 @@ type GalleryImage = {
   alt: string;
 };
 
+type ProjectSection = {
+  name: string;
+  images: string[];
+};
+
 type ProjectGroup = {
   name: string;
   images: string[];
+  sections?: ProjectSection[];
 };
 
 type ServiceItem = {
@@ -84,15 +90,56 @@ function getRouteFromHash(): Route {
   return window.location.hash === "#/portfolio" ? "portfolio" : "home";
 }
 
-function mapProjectToGallery(project: ProjectGroup): GalleryImage[] {
-  return project.images.map((src, index) => {
+function mapImagesToGallery(images: string[], projectName: string, label?: string): GalleryImage[] {
+  return images.map((src, index) => {
     const sequence = String(index + 1).padStart(2, "0");
+    const prefix = label ? `${projectName} - ${label}` : projectName;
     return {
       src,
-      caption: `${project.name} - Image ${sequence}`,
-      alt: `${project.name} completed project image ${sequence} by RJP Innovations`
+      caption: `${prefix} - Image ${sequence}`,
+      alt: `${prefix} completed project image ${sequence} by RJP Innovations`
     };
   });
+}
+
+function getProjectCoverImage(project: ProjectGroup): string | null {
+  const thumbnailImage = project.images.find((src) => /\/thumbnail\.(jpg|jpeg|png|webp|avif)$/i.test(src));
+  if (thumbnailImage) {
+    return thumbnailImage;
+  }
+
+  const directOne = project.images.find((src) => /\/1\.[^/]+$/i.test(src));
+  if (directOne) {
+    return directOne;
+  }
+  if (project.images.length > 0) {
+    return project.images[0];
+  }
+
+  if (!project.sections || project.sections.length === 0) {
+    return null;
+  }
+
+  const afterSection = project.sections.find((section) => section.name.toLowerCase() === "after");
+  const beforeSection = project.sections.find((section) => section.name.toLowerCase() === "before");
+  const orderedSections = [afterSection, beforeSection, ...project.sections].filter(
+    (section, index, array): section is ProjectSection => Boolean(section) && array.indexOf(section) === index
+  );
+
+  for (const section of orderedSections) {
+    const oneImage = section.images.find((src) => /\/1\.[^/]+$/i.test(src));
+    if (oneImage) {
+      return oneImage;
+    }
+  }
+
+  return orderedSections[0]?.images[0] ?? null;
+}
+
+function getProjectImageCount(project: ProjectGroup): number {
+  const directCount = project.images.length;
+  const sectionCount = (project.sections ?? []).reduce((total, section) => total + section.images.length, 0);
+  return directCount + sectionCount;
 }
 
 function useScrolledState() {
@@ -388,6 +435,7 @@ function HomePage() {
 function PortfolioPage() {
   const [selectedProjectName, setSelectedProjectName] = useState<string>("");
   const [lightbox, setLightbox] = useState<GalleryImage | null>(null);
+  const [sectionOpenState, setSectionOpenState] = useState<Record<string, boolean>>({});
 
   const projectGroups = useMemo<ProjectGroup[]>(() => imageManifest.projects, []);
   const selectedProject = useMemo(
@@ -395,9 +443,25 @@ function PortfolioPage() {
     [projectGroups, selectedProjectName]
   );
   const selectedProjectImages = useMemo(
-    () => (selectedProject ? mapProjectToGallery(selectedProject) : []),
+    () => (selectedProject ? mapImagesToGallery(selectedProject.images, selectedProject.name) : []),
     [selectedProject]
   );
+  const selectedProjectSections = useMemo(() => {
+    if (!selectedProject?.sections || selectedProject.sections.length === 0) {
+      return [];
+    }
+
+    const beforeSection = selectedProject.sections.find((section) => section.name.toLowerCase() === "before");
+    const afterSection = selectedProject.sections.find((section) => section.name.toLowerCase() === "after");
+    const remainingSections = selectedProject.sections.filter((section) => {
+      const lower = section.name.toLowerCase();
+      return lower !== "before" && lower !== "after";
+    });
+
+    return [beforeSection, afterSection, ...remainingSections].filter(
+      (section): section is ProjectSection => Boolean(section)
+    );
+  }, [selectedProject]);
 
   useEffect(() => {
     const onEscape = (event: KeyboardEvent) => {
@@ -409,6 +473,35 @@ function PortfolioPage() {
     window.addEventListener("keydown", onEscape);
     return () => window.removeEventListener("keydown", onEscape);
   }, []);
+
+  useEffect(() => {
+    if (!selectedProject) {
+      setSectionOpenState({});
+      return;
+    }
+
+    const nextState: Record<string, boolean> = {};
+    const hasBeforeAfter =
+      selectedProjectSections.some((section) => section.name.toLowerCase() === "before") &&
+      selectedProjectSections.some((section) => section.name.toLowerCase() === "after");
+
+    selectedProjectSections.forEach((section) => {
+      const key = section.name.toLowerCase();
+      if (hasBeforeAfter) {
+        if (key === "before") {
+          nextState[key] = false;
+        } else if (key === "after") {
+          nextState[key] = true;
+        } else {
+          nextState[key] = true;
+        }
+      } else {
+        nextState[key] = true;
+      }
+    });
+
+    setSectionOpenState(nextState);
+  }, [selectedProject, selectedProjectSections]);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -444,9 +537,9 @@ function PortfolioPage() {
                     className="cursor-pointer overflow-hidden rounded-[14px] border border-[#24183a24] bg-white text-left shadow-[0_8px_24px_rgba(9,21,15,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(9,21,15,0.2)]"
                     onClick={() => setSelectedProjectName(project.name)}
                   >
-                    {project.images[0] && (
+                    {getProjectCoverImage(project) && (
                       <img
-                        src={project.images[0]}
+                        src={getProjectCoverImage(project) ?? undefined}
                         alt={`${project.name} project preview`}
                         className="block aspect-[4/3] w-full object-cover"
                         loading="lazy"
@@ -455,7 +548,7 @@ function PortfolioPage() {
                     <div className="p-4">
                       <h3 className="m-0 text-base font-bold text-[#24183a]">{project.name}</h3>
                       <p className="mt-1 text-sm text-[#5d4e79]">
-                        {project.images.length} {project.images.length === 1 ? "image" : "images"}
+                        {getProjectImageCount(project)} {getProjectImageCount(project) === 1 ? "image" : "images"}
                       </p>
                     </div>
                   </button>
@@ -479,16 +572,79 @@ function PortfolioPage() {
               </div>
 
               <div className="mt-5 grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-3 px-1 pb-3 pt-3 max-[640px]:grid-cols-2 max-[640px]:gap-[0.7rem]">
-                {selectedProjectImages.map((image) => (
-                  <figure
-                    className="m-0 cursor-pointer overflow-hidden rounded-[14px] border border-[#24183a24] bg-white shadow-[0_8px_24px_rgba(9,21,15,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(9,21,15,0.2)]"
-                    key={image.src}
-                    onClick={() => setLightbox(image)}
-                  >
-                    <img loading="lazy" src={image.src} alt={image.alt} className="block aspect-[4/3] w-full object-cover" />
-                    <figcaption className="px-3 py-3 text-[0.92rem] text-[#5d4e79]">{image.caption}</figcaption>
-                  </figure>
-                ))}
+                {selectedProjectSections.length > 0 ? (
+                  <div className="col-span-full space-y-3">
+                    {selectedProjectSections.map((section) => {
+                      const sectionKey = section.name.toLowerCase();
+                      const hasBeforeAfter =
+                        selectedProjectSections.some((item) => item.name.toLowerCase() === "before") &&
+                        selectedProjectSections.some((item) => item.name.toLowerCase() === "after");
+                      const isOpen = sectionOpenState[sectionKey] ?? (hasBeforeAfter ? sectionKey !== "before" : true);
+                      const sectionImages = mapImagesToGallery(section.images, selectedProject.name, section.name);
+
+                      return (
+                        <div key={section.name} className="overflow-hidden rounded-[14px] border border-[#24183a24] bg-white">
+                          <button
+                            type="button"
+                            className="flex w-full cursor-pointer items-center justify-between border-0 bg-[#f5f1ff] px-4 py-3 text-left"
+                            onClick={() =>
+                              setSectionOpenState((current) => ({
+                                ...current,
+                                [sectionKey]: !isOpen
+                              }))
+                            }
+                            aria-expanded={isOpen}
+                          >
+                            <span className="text-base font-bold capitalize text-[#24183a]">{section.name}</span>
+                            <span className="text-xl font-bold leading-none text-[#4f2ab7]">{isOpen ? "-" : "+"}</span>
+                          </button>
+                          <div
+                            className={[
+                              "grid transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)]",
+                              isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                            ].join(" ")}
+                          >
+                            <div
+                              className={[
+                                "min-h-0 overflow-hidden transition-[padding] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)]",
+                                isOpen ? "p-3" : "p-0"
+                              ].join(" ")}
+                            >
+                              <div className="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-3 max-[640px]:grid-cols-2 max-[640px]:gap-[0.7rem]">
+                                {sectionImages.map((image) => (
+                                  <figure
+                                    className="m-0 cursor-pointer overflow-hidden rounded-[14px] border border-[#24183a24] bg-white shadow-[0_8px_24px_rgba(9,21,15,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(9,21,15,0.2)]"
+                                    key={image.src}
+                                    onClick={() => setLightbox(image)}
+                                  >
+                                    <img
+                                      loading="lazy"
+                                      src={image.src}
+                                      alt={image.alt}
+                                      className="block aspect-[4/3] w-full object-cover"
+                                    />
+                                    <figcaption className="px-3 py-3 text-[0.92rem] text-[#5d4e79]">{image.caption}</figcaption>
+                                  </figure>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  selectedProjectImages.map((image) => (
+                    <figure
+                      className="m-0 cursor-pointer overflow-hidden rounded-[14px] border border-[#24183a24] bg-white shadow-[0_8px_24px_rgba(9,21,15,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(9,21,15,0.2)]"
+                      key={image.src}
+                      onClick={() => setLightbox(image)}
+                    >
+                      <img loading="lazy" src={image.src} alt={image.alt} className="block aspect-[4/3] w-full object-cover" />
+                      <figcaption className="px-3 py-3 text-[0.92rem] text-[#5d4e79]">{image.caption}</figcaption>
+                    </figure>
+                  ))
+                )}
               </div>
             </>
           )}

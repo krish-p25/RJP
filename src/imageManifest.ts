@@ -5,7 +5,7 @@ export type ImageManifest = {
   carousel: string[];
   finishes: string[];
   works: string[];
-  projects: Array<{ name: string; images: string[] }>;
+  projects: Array<{ name: string; images: string[]; sections?: Array<{ name: string; images: string[] }> }>;
 };
 
 export const imageManifest: ImageManifest = {
@@ -53,7 +53,6 @@ export const imageManifest: ImageManifest = {
     {
       "name": "Ealing, London W5",
       "images": [
-        "/projects/Ealing, London W5/1.jpg",
         "/projects/Ealing, London W5/2.jpg",
         "/projects/Ealing, London W5/3.jpg",
         "/projects/Ealing, London W5/4.jpg",
@@ -62,28 +61,14 @@ export const imageManifest: ImageManifest = {
         "/projects/Ealing, London W5/7.jpg",
         "/projects/Ealing, London W5/8.jpg",
         "/projects/Ealing, London W5/9.jpg",
-        "/projects/Ealing, London W5/10.jpg"
-      ]
-    },
-    {
-      "name": "Ealing, London W5 2",
-      "images": [
-        "/projects/Ealing, London W5 2/1.jpg",
-        "/projects/Ealing, London W5 2/2.jpg",
-        "/projects/Ealing, London W5 2/3.jpg",
-        "/projects/Ealing, London W5 2/4.jpg",
-        "/projects/Ealing, London W5 2/5.jpg",
-        "/projects/Ealing, London W5 2/6.jpg",
-        "/projects/Ealing, London W5 2/7.jpg",
-        "/projects/Ealing, London W5 2/8.jpg",
-        "/projects/Ealing, London W5 2/9.jpg",
-        "/projects/Ealing, London W5 2/10.jpg"
-      ]
+        "/projects/Ealing, London W5/10.jpg",
+        "/projects/Ealing, London W5/thumbnail.jpg"
+      ],
+      "sections": []
     },
     {
       "name": "Hammersmith and Fulham",
       "images": [
-        "/projects/Hammersmith and Fulham/1.jpg",
         "/projects/Hammersmith and Fulham/2.jpg",
         "/projects/Hammersmith and Fulham/3.jpg",
         "/projects/Hammersmith and Fulham/4.jpg",
@@ -92,13 +77,14 @@ export const imageManifest: ImageManifest = {
         "/projects/Hammersmith and Fulham/7.jpg",
         "/projects/Hammersmith and Fulham/8.jpg",
         "/projects/Hammersmith and Fulham/9.jpg",
-        "/projects/Hammersmith and Fulham/10.jpg"
-      ]
+        "/projects/Hammersmith and Fulham/10.jpg",
+        "/projects/Hammersmith and Fulham/thumbnail.jpg"
+      ],
+      "sections": []
     },
     {
       "name": "Maida Vale, London",
       "images": [
-        "/projects/Maida Vale, London/1.jpg",
         "/projects/Maida Vale, London/2.jpg",
         "/projects/Maida Vale, London/3.jpg",
         "/projects/Maida Vale, London/4.jpg",
@@ -106,13 +92,57 @@ export const imageManifest: ImageManifest = {
         "/projects/Maida Vale, London/6.jpg",
         "/projects/Maida Vale, London/7.jpg",
         "/projects/Maida Vale, London/8.jpg",
-        "/projects/Maida Vale, London/9.jpg"
+        "/projects/Maida Vale, London/9.jpg",
+        "/projects/Maida Vale, London/thumbnail.jpg"
+      ],
+      "sections": []
+    },
+    {
+      "name": "Mayo Court, London",
+      "images": [
+        "/projects/Mayo Court, London/thumbnail.jpg"
+      ],
+      "sections": [
+        {
+          "name": "after",
+          "images": [
+            "/projects/Mayo Court, London/after/1.jpg",
+            "/projects/Mayo Court, London/after/Mayo_Court_Northcroft_Road_02092022_234543(1).jpg",
+            "/projects/Mayo Court, London/after/Mayo_Court_Northcroft_Road_02092022_234557(1).jpg",
+            "/projects/Mayo Court, London/after/Mayo_Court_Northcroft_Road_02092022_234616(1).jpg",
+            "/projects/Mayo Court, London/after/Mayo_Court_Northcroft_Road_02092022_234631(1).jpg",
+            "/projects/Mayo Court, London/after/Mayo_Court_Northcroft_Road_02092022_234645(1).jpg",
+            "/projects/Mayo Court, London/after/Mayo_Court_Northcroft_Road_02092022_234738(1).jpg",
+            "/projects/Mayo Court, London/after/Mayo_Court_Northcroft_Road_02092022_234759(1).jpg",
+            "/projects/Mayo Court, London/after/Mayo_Court_Northcroft_Road_02092022_234818(1).jpg",
+            "/projects/Mayo Court, London/after/Mayo_Court_Northcroft_Road_02092022_235011.jpg"
+          ]
+        },
+        {
+          "name": "before",
+          "images": [
+            "/projects/Mayo Court, London/before/B66C2027-AF04-4929-A5E8-300F2207DA3C.JPG",
+            "/projects/Mayo Court, London/before/CE8F2F05-5D08-4D18-8103-31D15E0AC7C0.JPG",
+            "/projects/Mayo Court, London/before/D75B3D90-04CB-473E-AB05-8FDB7B5AE35B.JPG",
+            "/projects/Mayo Court, London/before/F2A5F3F5-0C78-414E-9CBC-E80BD8F4AEA9.JPG",
+            "/projects/Mayo Court, London/before/FB7165C0-08FD-450C-ADA3-8E7E8EC88D5D.JPG",
+            "/projects/Mayo Court, London/before/Property Image_1.JPG",
+            "/projects/Mayo Court, London/before/Property Image_2.JPG",
+            "/projects/Mayo Court, London/before/Property Image_3.JPG",
+            "/projects/Mayo Court, London/before/Property Image_4.JPG",
+            "/projects/Mayo Court, London/before/Property Image_5.JPG",
+            "/projects/Mayo Court, London/before/Property Image_6.JPG",
+            "/projects/Mayo Court, London/before/Property Image_7.JPG",
+            "/projects/Mayo Court, London/before/Property Image_8.JPG",
+            "/projects/Mayo Court, London/before/Property Image_10.JPG",
+            "/projects/Mayo Court, London/before/Property Image.JPG"
+          ]
+        }
       ]
     },
     {
       "name": "Stanmore",
       "images": [
-        "/projects/Stanmore/1.jpg",
         "/projects/Stanmore/2.jpg",
         "/projects/Stanmore/3.jpg",
         "/projects/Stanmore/4.jpg",
@@ -121,8 +151,10 @@ export const imageManifest: ImageManifest = {
         "/projects/Stanmore/7.jpg",
         "/projects/Stanmore/8.jpg",
         "/projects/Stanmore/9.jpg",
-        "/projects/Stanmore/10.jpg"
-      ]
+        "/projects/Stanmore/10.jpg",
+        "/projects/Stanmore/thumbnail.jpg"
+      ],
+      "sections": []
     }
   ]
 };
