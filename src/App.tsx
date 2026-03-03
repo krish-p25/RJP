@@ -412,16 +412,18 @@ function HomePage() {
         </button>
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
-          <img
-            src="/logos/logo.png"
-            alt="RJP Innovations logo"
-            className={[
-              "w-[min(220px,62vw)] rounded-[22px] transition-opacity duration-500 sm:w-[min(320px,78vw)]",
-              isIntroLogoVisible
-                ? "opacity-100 drop-shadow-[0_10px_30px_rgba(0,0,0,0.45)]"
-                : "opacity-0 sm:drop-shadow-[0_10px_30px_rgba(0,0,0,0.45)] max-[640px]:drop-shadow-none"
-            ].join(" ")}
-          />
+          <div className="grid h-[min(120px,34vw)] w-[min(220px,62vw)] place-items-center sm:h-[min(180px,26vw)] sm:w-[min(320px,78vw)]">
+            <img
+              src="/logos/logo.png"
+              alt="RJP Innovations logo"
+              className={[
+                "h-full w-full rounded-[22px] object-contain transition-opacity duration-500",
+                isIntroLogoVisible
+                  ? "opacity-100 drop-shadow-[0_10px_30px_rgba(0,0,0,0.45)]"
+                  : "opacity-0 sm:drop-shadow-[0_10px_30px_rgba(0,0,0,0.45)] max-[640px]:drop-shadow-none"
+              ].join(" ")}
+            />
+          </div>
           <p
             className={[
               "mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-white/85 transition-opacity duration-500",
