@@ -26,14 +26,23 @@
 
 @layer utilities {
   .skeleton-shimmer {
-    background: linear-gradient(110deg, rgba(255, 255, 255, 0.12) 8%, rgba(255, 255, 255, 0.28) 18%, rgba(255, 255, 255, 0.12) 33%);
-    background-size: 220% 100%;
-    animation: skeleton-shimmer 1.2s linear infinite;
+    background:
+      radial-gradient(120% 90% at 20% 20%, rgba(255, 255, 255, 0.38) 0, rgba(255, 255, 255, 0) 58%),
+      radial-gradient(110% 90% at 82% 72%, rgba(206, 184, 255, 0.42) 0, rgba(206, 184, 255, 0) 62%),
+      linear-gradient(120deg, rgba(241, 234, 255, 0.92), rgba(233, 223, 255, 0.82));
+    background-size: 140% 140%, 140% 140%, 100% 100%;
+    background-position: 0% 0%, 100% 100%, 0% 0%;
+    filter: blur(0.6px);
+    animation: skeleton-shimmer 2.2s ease-in-out infinite alternate;
   }
 
   @keyframes skeleton-shimmer {
-    to {
-      background-position-x: -220%;
+    0% {
+      background-position: 0% 0%, 100% 100%, 0% 0%;
+    }
+
+    100% {
+      background-position: 22% 18%, 74% 76%, 0% 0%;
     }
   }
 
