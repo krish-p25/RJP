@@ -139,6 +139,7 @@ function HomePage() {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [isIntroLogoVisible, setIsIntroLogoVisible] = useState(true);
   const logoRestoreTimerRef = useRef<number | null>(null);
+  const autoAdvanceIntervalRef = useRef<number | null>(null);
 
   const carouselImages = useMemo(() => {
     if (imageManifest.carousel.length > 0) {
@@ -150,6 +151,21 @@ function HomePage() {
     return imageManifest.works;
   }, []);
 
+  const restartAutoAdvance = useCallback(() => {
+    if (autoAdvanceIntervalRef.current !== null) {
+      window.clearInterval(autoAdvanceIntervalRef.current);
+      autoAdvanceIntervalRef.current = null;
+    }
+
+    if (carouselImages.length < 2) {
+      return;
+    }
+
+    autoAdvanceIntervalRef.current = window.setInterval(() => {
+      setCarouselIndex((current) => (current + 1) % carouselImages.length);
+    }, CAROUSEL_INTERVAL_MS);
+  }, [carouselImages.length]);
+
   const cycleCarousel = useCallback(
     (direction: 1 | -1) => {
       if (carouselImages.length === 0) {
@@ -157,6 +173,7 @@ function HomePage() {
       }
 
       setCarouselIndex((current) => (current + direction + carouselImages.length) % carouselImages.length);
+      restartAutoAdvance();
       setIsIntroLogoVisible(false);
 
       if (logoRestoreTimerRef.current !== null) {
@@ -167,7 +184,7 @@ function HomePage() {
         setIsIntroLogoVisible(true);
       }, LOGO_RESTORE_DELAY_MS);
     },
-    [carouselImages.length]
+    [carouselImages.length, restartAutoAdvance]
   );
 
   useEffect(() => {
@@ -189,21 +206,22 @@ function HomePage() {
   }, []);
 
   useEffect(() => {
-    if (carouselImages.length < 2) {
-      return;
-    }
-
-    const timer = window.setInterval(() => {
-      setCarouselIndex((current) => (current + 1) % carouselImages.length);
-    }, CAROUSEL_INTERVAL_MS);
-
-    return () => window.clearInterval(timer);
-  }, [carouselImages]);
+    restartAutoAdvance();
+    return () => {
+      if (autoAdvanceIntervalRef.current !== null) {
+        window.clearInterval(autoAdvanceIntervalRef.current);
+        autoAdvanceIntervalRef.current = null;
+      }
+    };
+  }, [restartAutoAdvance]);
 
   useEffect(
     () => () => {
       if (logoRestoreTimerRef.current !== null) {
         window.clearTimeout(logoRestoreTimerRef.current);
+      }
+      if (autoAdvanceIntervalRef.current !== null) {
+        window.clearInterval(autoAdvanceIntervalRef.current);
       }
     },
     []
@@ -253,11 +271,20 @@ function HomePage() {
             src="/logos/logo.png"
             alt="RJP Innovations logo"
             className={[
-              "w-[min(220px,62vw)] rounded-[22px] drop-shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-opacity duration-500 sm:w-[min(320px,78vw)]",
-              isIntroLogoVisible ? "opacity-100" : "opacity-0"
+              "w-[min(220px,62vw)] rounded-[22px] transition-opacity duration-500 sm:w-[min(320px,78vw)]",
+              isIntroLogoVisible
+                ? "opacity-100 drop-shadow-[0_10px_30px_rgba(0,0,0,0.45)]"
+                : "opacity-0 sm:drop-shadow-[0_10px_30px_rgba(0,0,0,0.45)] max-[640px]:drop-shadow-none"
             ].join(" ")}
           />
-          <p className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-white/85">Scroll to explore</p>
+          <p
+            className={[
+              "mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-white/85 transition-opacity duration-500",
+              isIntroLogoVisible ? "opacity-100" : "opacity-0"
+            ].join(" ")}
+          >
+            Scroll to explore
+          </p>
         </div>
       </section>
 
