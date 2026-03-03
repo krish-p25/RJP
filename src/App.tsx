@@ -30,11 +30,23 @@ function App() {
   const [galleryHeight, setGalleryHeight] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [isIntroLogoVisible, setIsIntroLogoVisible] = useState(true);
   const finishesRef = useRef<HTMLDivElement>(null);
   const worksRef = useRef<HTMLDivElement>(null);
+  const logoRestoreTimerRef = useRef<number | null>(null);
 
   const finishImages = useMemo(() => mapToGallery(imageManifest.finishes, "finishes"), []);
   const workImages = useMemo(() => mapToGallery(imageManifest.works, "works"), []);
+  const carouselImages = useMemo(() => {
+    if (imageManifest.carousel.length > 0) {
+      return imageManifest.carousel;
+    }
+    if (imageManifest.finishes.length > 0) {
+      return imageManifest.finishes;
+    }
+    return imageManifest.works;
+  }, []);
 
   const measureGalleryHeight = useCallback(() => {
     const activePanel = activeCategory === "finishes" ? finishesRef.current : worksRef.current;
@@ -96,6 +108,47 @@ function App() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    if (carouselImages.length < 2) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setCarouselIndex((current) => (current + 1) % carouselImages.length);
+    }, 3800);
+
+    return () => window.clearInterval(timer);
+  }, [carouselImages]);
+
+  useEffect(
+    () => () => {
+      if (logoRestoreTimerRef.current !== null) {
+        window.clearTimeout(logoRestoreTimerRef.current);
+      }
+    },
+    []
+  );
+
+  const cycleCarousel = useCallback(
+    (direction: 1 | -1) => {
+      if (carouselImages.length === 0) {
+        return;
+      }
+
+      setCarouselIndex((current) => (current + direction + carouselImages.length) % carouselImages.length);
+      setIsIntroLogoVisible(false);
+
+      if (logoRestoreTimerRef.current !== null) {
+        window.clearTimeout(logoRestoreTimerRef.current);
+      }
+
+      logoRestoreTimerRef.current = window.setTimeout(() => {
+        setIsIntroLogoVisible(true);
+      }, 2800);
+    },
+    [carouselImages.length]
+  );
+
   return (
     <>
       <Analytics />
@@ -122,6 +175,48 @@ function App() {
           </a>
         </nav>
       </header>
+
+      <section className="relative h-[100svh] min-h-[560px] overflow-hidden">
+        {carouselImages.map((src, index) => (
+          <img
+            key={src}
+            src={src}
+            alt="Featured completed renovation project by RJP Innovations"
+            className={[
+              "absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,0.61,0.36,1)]",
+              index === carouselIndex ? "opacity-100" : "opacity-0"
+            ].join(" ")}
+          />
+        ))}
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,8,26,0.46)_0%,rgba(13,8,26,0.56)_48%,rgba(13,8,26,0.72)_100%)]" />
+        <button
+          type="button"
+          aria-label="Previous slide"
+          className="absolute left-3 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/35 bg-[rgba(9,8,18,0.32)] text-2xl text-white transition-[background-color,border-color] duration-200 hover:border-white/70 hover:bg-[rgba(9,8,18,0.52)]"
+          onClick={() => cycleCarousel(-1)}
+        >
+          &#8249;
+        </button>
+        <button
+          type="button"
+          aria-label="Next slide"
+          className="absolute right-3 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/35 bg-[rgba(9,8,18,0.32)] text-2xl text-white transition-[background-color,border-color] duration-200 hover:border-white/70 hover:bg-[rgba(9,8,18,0.52)]"
+          onClick={() => cycleCarousel(1)}
+        >
+          &#8250;
+        </button>
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
+          <img
+            src="/logos/logo.png"
+            alt="RJP Innovations logo"
+            className={[
+              "w-[min(220px,62vw)] rounded-[22px] drop-shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-opacity duration-500 sm:w-[min(320px,78vw)]",
+              isIntroLogoVisible ? "opacity-100" : "opacity-0"
+            ].join(" ")}
+          />
+          <p className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-white/85">Scroll to explore</p>
+        </div>
+      </section>
 
       <main className="mx-auto w-[min(1100px,calc(100%-2rem))] pb-12 pt-[clamp(3.8rem,5.8vw,4.4rem)] max-[640px]:w-[calc(100%-1rem)] max-[640px]:pt-[3.4rem]">
         <section className="reveal pb-0 pt-[clamp(3rem,7vw,6rem)] max-[640px]:pt-[1.1rem]">
