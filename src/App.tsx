@@ -10,6 +10,17 @@ type GalleryImage = {
   alt: string;
 };
 
+type ImageWithSkeletonProps = {
+  src: string;
+  alt: string;
+  imgClassName: string;
+  wrapperClassName?: string;
+  skeletonClassName?: string;
+  loading?: "lazy" | "eager";
+  visible?: boolean;
+  onLoad?: () => void;
+};
+
 type ProjectSection = {
   name: string;
   images: string[];
@@ -85,9 +96,28 @@ const HEADER_TOP_CLASSES =
 const CAROUSEL_INTERVAL_MS = 3800;
 const LOGO_RESTORE_DELAY_MS = 2800;
 const ROUTE_FADE_MS = 220;
+const PORTFOLIO_HASH_PREFIX = "#/portfolio";
 
 function getRouteFromHash(): Route {
-  return window.location.hash === "#/portfolio" ? "portfolio" : "home";
+  return window.location.hash.startsWith(PORTFOLIO_HASH_PREFIX) ? "portfolio" : "home";
+}
+
+function getProjectFromHash(): string {
+  if (!window.location.hash.startsWith(PORTFOLIO_HASH_PREFIX)) {
+    return "";
+  }
+
+  const suffix = window.location.hash.slice(PORTFOLIO_HASH_PREFIX.length);
+  const rawProject = suffix.startsWith("/") ? suffix.slice(1) : suffix;
+  if (!rawProject) {
+    return "";
+  }
+
+  try {
+    return decodeURIComponent(rawProject);
+  } catch {
+    return "";
+  }
 }
 
 function mapImagesToGallery(images: string[], projectName: string, label?: string): GalleryImage[] {
@@ -140,6 +170,70 @@ function getProjectImageCount(project: ProjectGroup): number {
   const directCount = project.images.length;
   const sectionCount = (project.sections ?? []).reduce((total, section) => total + section.images.length, 0);
   return directCount + sectionCount;
+}
+
+function ImageWithSkeleton({
+  src,
+  alt,
+  imgClassName,
+  wrapperClassName,
+  skeletonClassName,
+  loading = "lazy",
+  visible = true,
+  onLoad
+}: ImageWithSkeletonProps) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    let isCancelled = false;
+    const preloader = new window.Image();
+
+    const markLoaded = () => {
+      if (!isCancelled) {
+        setIsLoaded(true);
+      }
+    };
+
+    setIsLoaded(false);
+    preloader.src = src;
+
+    if (preloader.complete && preloader.naturalWidth > 0) {
+      setIsLoaded(true);
+      return () => {
+        isCancelled = true;
+      };
+    }
+
+    preloader.onload = markLoaded;
+    preloader.onerror = markLoaded;
+
+    return () => {
+      isCancelled = true;
+      preloader.onload = null;
+      preloader.onerror = null;
+    };
+  }, [src]);
+
+  const shouldShowImage = isLoaded && visible;
+
+  return (
+    <div className={["relative", wrapperClassName ?? ""].join(" ")}>
+      {!isLoaded && <div aria-hidden="true" className={["absolute inset-0 skeleton-shimmer", skeletonClassName ?? ""].join(" ")} />}
+      <img
+        src={src}
+        alt={alt}
+        loading={loading}
+        className={[imgClassName, "transition-opacity duration-300", shouldShowImage ? "opacity-100" : "opacity-0"].join(" ")}
+        onLoad={() => {
+          setIsLoaded(true);
+          onLoad?.();
+        }}
+        onError={() => {
+          setIsLoaded(true);
+        }}
+      />
+    </div>
+  );
 }
 
 function useScrolledState() {
@@ -225,10 +319,12 @@ function HomePage() {
 
       if (logoRestoreTimerRef.current !== null) {
         window.clearTimeout(logoRestoreTimerRef.current);
+        logoRestoreTimerRef.current = null;
       }
 
       logoRestoreTimerRef.current = window.setTimeout(() => {
         setIsIntroLogoVisible(true);
+        logoRestoreTimerRef.current = null;
       }, LOGO_RESTORE_DELAY_MS);
     },
     [carouselImages.length, restartAutoAdvance]
@@ -266,9 +362,11 @@ function HomePage() {
     () => () => {
       if (logoRestoreTimerRef.current !== null) {
         window.clearTimeout(logoRestoreTimerRef.current);
+        logoRestoreTimerRef.current = null;
       }
       if (autoAdvanceIntervalRef.current !== null) {
         window.clearInterval(autoAdvanceIntervalRef.current);
+        autoAdvanceIntervalRef.current = null;
       }
     },
     []
@@ -433,7 +531,7 @@ function HomePage() {
 }
 
 function PortfolioPage() {
-  const [selectedProjectName, setSelectedProjectName] = useState<string>("");
+  const [selectedProjectName, setSelectedProjectName] = useState<string>(() => getProjectFromHash());
   const [lightbox, setLightbox] = useState<GalleryImage | null>(null);
   const [sectionOpenState, setSectionOpenState] = useState<Record<string, boolean>>({});
 
@@ -464,6 +562,16 @@ function PortfolioPage() {
   }, [selectedProject]);
 
   useEffect(() => {
+    const syncSelectedProjectFromHash = () => {
+      setSelectedProjectName(getProjectFromHash());
+    };
+
+    syncSelectedProjectFromHash();
+    window.addEventListener("hashchange", syncSelectedProjectFromHash);
+    return () => window.removeEventListener("hashchange", syncSelectedProjectFromHash);
+  }, []);
+
+  useEffect(() => {
     const onEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setLightbox(null);
@@ -473,6 +581,12 @@ function PortfolioPage() {
     window.addEventListener("keydown", onEscape);
     return () => window.removeEventListener("keydown", onEscape);
   }, []);
+
+  useEffect(() => {
+    if (selectedProjectName && !selectedProject) {
+      window.location.hash = PORTFOLIO_HASH_PREFIX;
+    }
+  }, [selectedProjectName, selectedProject]);
 
   useEffect(() => {
     if (!selectedProject) {
@@ -535,14 +649,17 @@ function PortfolioPage() {
                     key={project.name}
                     type="button"
                     className="cursor-pointer overflow-hidden rounded-[14px] border border-[#24183a24] bg-white text-left shadow-[0_8px_24px_rgba(9,21,15,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(9,21,15,0.2)]"
-                    onClick={() => setSelectedProjectName(project.name)}
+                    onClick={() => {
+                      window.location.hash = `${PORTFOLIO_HASH_PREFIX}/${encodeURIComponent(project.name)}`;
+                    }}
                   >
                     {getProjectCoverImage(project) && (
-                      <img
-                        src={getProjectCoverImage(project) ?? undefined}
+                      <ImageWithSkeleton
+                        src={getProjectCoverImage(project) as string}
                         alt={`${project.name} project preview`}
-                        className="block aspect-[4/3] w-full object-cover"
+                        imgClassName="block aspect-[4/3] w-full object-cover"
                         loading="lazy"
+                        skeletonClassName="bg-[#efe9ff]"
                       />
                     )}
                     <div className="p-4">
@@ -565,7 +682,9 @@ function PortfolioPage() {
                 <button
                   type="button"
                   className="cursor-pointer rounded-full border border-[#24183a24] bg-white px-4 py-2 text-sm font-bold text-[#24183a] transition-transform duration-200 hover:-translate-y-px"
-                  onClick={() => setSelectedProjectName("")}
+                  onClick={() => {
+                    window.location.hash = PORTFOLIO_HASH_PREFIX;
+                  }}
                 >
                   Back to projects
                 </button>
@@ -617,11 +736,12 @@ function PortfolioPage() {
                                     key={image.src}
                                     onClick={() => setLightbox(image)}
                                   >
-                                    <img
+                                    <ImageWithSkeleton
                                       loading="lazy"
                                       src={image.src}
                                       alt={image.alt}
-                                      className="block aspect-[4/3] w-full object-cover"
+                                      imgClassName="block aspect-[4/3] w-full object-cover"
+                                      skeletonClassName="bg-[#efe9ff]"
                                     />
                                     <figcaption className="px-3 py-3 text-[0.92rem] text-[#5d4e79]">{image.caption}</figcaption>
                                   </figure>
@@ -640,7 +760,13 @@ function PortfolioPage() {
                       key={image.src}
                       onClick={() => setLightbox(image)}
                     >
-                      <img loading="lazy" src={image.src} alt={image.alt} className="block aspect-[4/3] w-full object-cover" />
+                      <ImageWithSkeleton
+                        loading="lazy"
+                        src={image.src}
+                        alt={image.alt}
+                        imgClassName="block aspect-[4/3] w-full object-cover"
+                        skeletonClassName="bg-[#efe9ff]"
+                      />
                       <figcaption className="px-3 py-3 text-[0.92rem] text-[#5d4e79]">{image.caption}</figcaption>
                     </figure>
                   ))
@@ -672,10 +798,12 @@ function PortfolioPage() {
         </button>
         {lightbox && (
           <>
-            <img
+            <ImageWithSkeleton
               src={lightbox.src}
               alt={lightbox.caption}
-              className="max-h-[78vh] max-w-[min(980px,95vw)] rounded-[14px] shadow-[0_24px_55px_rgba(0,0,0,0.5)]"
+              imgClassName="max-h-[78vh] max-w-[min(980px,95vw)] rounded-[14px] shadow-[0_24px_55px_rgba(0,0,0,0.5)]"
+              loading="eager"
+              skeletonClassName="rounded-[14px] bg-white/15"
             />
             <p className="mt-2 text-center text-[#e7ece8]">{lightbox.caption}</p>
           </>
