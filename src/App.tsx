@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import { imageManifest } from "./imageManifest";
 
 type Route = "home" | "portfolio";
@@ -869,6 +870,7 @@ function App() {
   return (
     <>
       <Analytics />
+      <SpeedInsights />
       <div className="fixed -left-20 top-24 -z-10 h-80 w-80 rounded-full bg-[#b69bff] opacity-35 blur-[70px]" />
       <div className="fixed -right-28 -bottom-10 -z-10 h-[360px] w-[360px] rounded-full bg-[#d2beff] opacity-35 blur-[70px]" />
       <SiteHeader route={route} />
