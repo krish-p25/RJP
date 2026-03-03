@@ -537,6 +537,7 @@ function PortfolioPage() {
   const [selectedProjectName, setSelectedProjectName] = useState<string>(() => getProjectFromHash());
   const [lightbox, setLightbox] = useState<GalleryImage | null>(null);
   const [sectionOpenState, setSectionOpenState] = useState<Record<string, boolean>>({});
+  const previousSelectedProjectRef = useRef<string>(selectedProjectName);
 
   const projectGroups = useMemo<ProjectGroup[]>(() => imageManifest.projects, []);
   const selectedProject = useMemo(
@@ -590,6 +591,13 @@ function PortfolioPage() {
       window.location.hash = PORTFOLIO_HASH_PREFIX;
     }
   }, [selectedProjectName, selectedProject]);
+
+  useEffect(() => {
+    if (!previousSelectedProjectRef.current && selectedProjectName) {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+    previousSelectedProjectRef.current = selectedProjectName;
+  }, [selectedProjectName]);
 
   useEffect(() => {
     if (!selectedProject) {
