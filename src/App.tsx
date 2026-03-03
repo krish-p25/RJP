@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import { imageManifest } from "./imageManifest";
 
-type Category = "finishes" | "works";
+type Route = "home" | "portfolio";
 
 type GalleryImage = {
   src: string;
@@ -10,34 +10,136 @@ type GalleryImage = {
   alt: string;
 };
 
-function mapToGallery(list: string[], category: Category): GalleryImage[] {
-  return list.map((src, index) => ({
-    src,
-    caption:
-      category === "finishes"
-        ? `Finished Project ${String(index + 1).padStart(2, "0")}`
-        : `Construction Work ${String(index + 1).padStart(2, "0")}`,
-    alt:
-      category === "finishes"
-        ? `Completed property renovation and finishing project ${String(index + 1).padStart(2, "0")} by RJP Innovations`
-        : `Building and renovation construction process image ${String(index + 1).padStart(2, "0")} by RJP Innovations`
-  }));
+type ProjectGroup = {
+  name: string;
+  images: string[];
+};
+
+type ServiceItem = {
+  number: string;
+  title: string;
+  description: string;
+};
+
+const ABOUT_PARAGRAPHS = [
+  "We believe great construction is about more than building - it's about creating spaces that improve the way people live and work. Based in London, we specialise in high-quality renovation, refurbishment, and building completion services, helping homeowners, landlords, and developers transform properties with confidence.",
+  "Our team is passionate about delivering projects that combine craftsmanship, thoughtful design, and lasting quality. From the earliest planning stages through to the final finishes, we take pride in ensuring every detail is completed with care and professionalism. Whether it's a full property renovation, an interior refurbishment, or external improvements, we approach every project with the same commitment to excellence.",
+  "As a member of the Federation of Master Builders, we are proud to be recognised as part of one of the UK's most respected construction organisations. This reflects our dedication to maintaining high industry standards, delivering reliable workmanship, and providing a service our clients can trust.",
+  "We understand that every property project is a significant investment. That's why we focus on clear communication, dependable timelines, and results that genuinely enhance both the value and functionality of a space. Our goal is always to exceed expectations and leave our clients with a finished project they can be proud of."
+] as const;
+
+const SERVICES: ServiceItem[] = [
+  {
+    number: "01",
+    title: "Home Renovation Planning",
+    description:
+      "We start with a full site review, define your renovation goals, and convert them into a clear scope of works. This includes layout planning, budget alignment, timeline forecasting, and practical build sequencing to reduce delays."
+  },
+  {
+    number: "02",
+    title: "Structural Building Works",
+    description:
+      "Our team delivers load-bearing wall alterations, steel installations, openings, and core structural modifications. Every stage is coordinated with engineers and building control requirements to ensure safety, compliance, and durability."
+  },
+  {
+    number: "03",
+    title: "Interior Refurbishment",
+    description:
+      "We upgrade kitchens, bathrooms, living spaces, and bedrooms with high-quality materials and careful craftsmanship. From walls and ceilings to flooring and joinery, we focus on both aesthetics and long-term performance."
+  },
+  {
+    number: "04",
+    title: "Electrical & Plumbing Integration",
+    description:
+      "We coordinate certified electrical and plumbing works as part of the full build programme. This includes first-fix and second-fix services, ensuring utilities are safely installed, neatly finished, and aligned with your design."
+  },
+  {
+    number: "05",
+    title: "External Improvements",
+    description:
+      "We deliver facade repairs, rendering, painting, drainage improvements, and outdoor upgrades that protect and elevate your property. The focus is weather resilience, visual quality, and practical maintenance over time."
+  },
+  {
+    number: "06",
+    title: "Project Management & Client Updates",
+    description:
+      "From procurement and scheduling to on-site supervision, we manage the process end to end. Regular progress updates, milestone tracking, and transparent communication keep you informed and confident throughout the project."
+  }
+];
+
+const HEADER_BASE_CLASSES =
+  "fixed left-1/2 z-20 flex -translate-x-1/2 items-center justify-between border backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]";
+
+const HEADER_SCROLLED_CLASSES =
+  "top-3 w-[calc(100%-1.4rem)] max-w-[1040px] rounded-full border-[#4f2ab733] bg-white/65 px-4 py-3 shadow-[0_14px_35px_rgba(30,14,59,0.16)] md:px-6 lg:px-10 max-[640px]:top-[0.55rem] max-[640px]:w-[calc(100%-0.8rem)]";
+
+const HEADER_TOP_CLASSES =
+  "top-0 w-full max-w-[100%] rounded-none border-[#24183a00] border-b-[#24183a24] bg-[#f8f6ffbf] px-4 py-4 shadow-none md:px-6 lg:px-12";
+
+const CAROUSEL_INTERVAL_MS = 3800;
+const LOGO_RESTORE_DELAY_MS = 2800;
+const ROUTE_FADE_MS = 220;
+
+function getRouteFromHash(): Route {
+  return window.location.hash === "#/portfolio" ? "portfolio" : "home";
 }
 
-function App() {
-  const [activeCategory, setActiveCategory] = useState<Category>("finishes");
-  const [lightbox, setLightbox] = useState<GalleryImage | null>(null);
-  const [galleryHeight, setGalleryHeight] = useState(0);
+function mapProjectToGallery(project: ProjectGroup): GalleryImage[] {
+  return project.images.map((src, index) => {
+    const sequence = String(index + 1).padStart(2, "0");
+    return {
+      src,
+      caption: `${project.name} - Image ${sequence}`,
+      alt: `${project.name} completed project image ${sequence} by RJP Innovations`
+    };
+  });
+}
+
+function useScrolledState() {
   const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 0);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return isScrolled;
+}
+
+function SiteHeader({ route }: { route: Route }) {
+  const isScrolled = useScrolledState();
+
+  return (
+    <header className={[HEADER_BASE_CLASSES, isScrolled ? HEADER_SCROLLED_CLASSES : HEADER_TOP_CLASSES].join(" ")}>
+      <a href="#/" className="text-base font-extrabold tracking-[0.02em] text-[#24183a] no-underline">
+        RJP Innovations
+      </a>
+      <nav className="flex gap-4 max-[640px]:gap-2.5">
+        <a
+          href={route === "portfolio" ? "#/portfolio" : "#/portfolio"}
+          className="text-sm font-semibold text-[#5d4e79] no-underline max-[640px]:text-[0.88rem]"
+        >
+          Portfolio
+        </a>
+        <a
+          href="#contact"
+          className="text-sm font-semibold text-[#5d4e79] no-underline max-[640px]:text-[0.88rem]"
+        >
+          Contact
+        </a>
+      </nav>
+    </header>
+  );
+}
+
+function HomePage() {
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [isIntroLogoVisible, setIsIntroLogoVisible] = useState(true);
-  const finishesRef = useRef<HTMLDivElement>(null);
-  const worksRef = useRef<HTMLDivElement>(null);
   const logoRestoreTimerRef = useRef<number | null>(null);
 
-  const finishImages = useMemo(() => mapToGallery(imageManifest.finishes, "finishes"), []);
-  const workImages = useMemo(() => mapToGallery(imageManifest.works, "works"), []);
   const carouselImages = useMemo(() => {
     if (imageManifest.carousel.length > 0) {
       return imageManifest.carousel;
@@ -48,16 +150,25 @@ function App() {
     return imageManifest.works;
   }, []);
 
-  const measureGalleryHeight = useCallback(() => {
-    const activePanel = activeCategory === "finishes" ? finishesRef.current : worksRef.current;
-    if (activePanel) {
-      setGalleryHeight(activePanel.scrollHeight);
-    }
-  }, [activeCategory]);
+  const cycleCarousel = useCallback(
+    (direction: 1 | -1) => {
+      if (carouselImages.length === 0) {
+        return;
+      }
 
-  const handleImageLoad = useCallback(() => {
-    measureGalleryHeight();
-  }, [measureGalleryHeight]);
+      setCarouselIndex((current) => (current + direction + carouselImages.length) % carouselImages.length);
+      setIsIntroLogoVisible(false);
+
+      if (logoRestoreTimerRef.current !== null) {
+        window.clearTimeout(logoRestoreTimerRef.current);
+      }
+
+      logoRestoreTimerRef.current = window.setTimeout(() => {
+        setIsIntroLogoVisible(true);
+      }, LOGO_RESTORE_DELAY_MS);
+    },
+    [carouselImages.length]
+  );
 
   useEffect(() => {
     const items = document.querySelectorAll<HTMLElement>(".reveal");
@@ -78,44 +189,13 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const onEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setLightbox(null);
-      }
-    };
-
-    window.addEventListener("keydown", onEscape);
-    return () => window.removeEventListener("keydown", onEscape);
-  }, []);
-
-  useLayoutEffect(() => {
-    measureGalleryHeight();
-  }, [measureGalleryHeight, finishImages.length, workImages.length]);
-
-  useEffect(() => {
-    const onResize = () => measureGalleryHeight();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, [measureGalleryHeight]);
-
-  useEffect(() => {
-    const onScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
-
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
     if (carouselImages.length < 2) {
       return;
     }
 
     const timer = window.setInterval(() => {
       setCarouselIndex((current) => (current + 1) % carouselImages.length);
-    }, 3800);
+    }, CAROUSEL_INTERVAL_MS);
 
     return () => window.clearInterval(timer);
   }, [carouselImages]);
@@ -129,53 +209,8 @@ function App() {
     []
   );
 
-  const cycleCarousel = useCallback(
-    (direction: 1 | -1) => {
-      if (carouselImages.length === 0) {
-        return;
-      }
-
-      setCarouselIndex((current) => (current + direction + carouselImages.length) % carouselImages.length);
-      setIsIntroLogoVisible(false);
-
-      if (logoRestoreTimerRef.current !== null) {
-        window.clearTimeout(logoRestoreTimerRef.current);
-      }
-
-      logoRestoreTimerRef.current = window.setTimeout(() => {
-        setIsIntroLogoVisible(true);
-      }, 2800);
-    },
-    [carouselImages.length]
-  );
-
   return (
     <>
-      <Analytics />
-      <div className="fixed -left-20 top-24 -z-10 h-80 w-80 rounded-full bg-[#b69bff] opacity-35 blur-[70px]" />
-      <div className="fixed -right-28 -bottom-10 -z-10 h-[360px] w-[360px] rounded-full bg-[#d2beff] opacity-35 blur-[70px]" />
-
-      <header
-        className={[
-          "fixed left-1/2 z-20 flex -translate-x-1/2 items-center justify-between border backdrop-blur-md transition-[top,width,padding,border-radius,background-color,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)]",
-          isScrolled
-            ? "top-3 w-[calc(100%-1.4rem)] max-w-[1040px] rounded-full border-[#4f2ab733] bg-white/65 px-4 py-3 shadow-[0_14px_35px_rgba(30,14,59,0.16)] md:px-6 lg:px-10 max-[640px]:top-[0.55rem] max-[640px]:w-[calc(100%-0.8rem)]"
-            : "top-0 w-full max-w-none rounded-none border-x-0 border-t-0 border-b-[#24183a24] bg-[#f8f6ffbf] px-4 py-4 shadow-none md:px-6 lg:px-12"
-        ].join(" ")}
-      >
-        <a href="#" className="text-base font-extrabold tracking-[0.02em] text-[#24183a] no-underline">
-          RJP Innovations
-        </a>
-        <nav className="flex gap-4 max-[640px]:gap-2.5">
-          <a href="#portfolio" className="text-sm font-semibold text-[#5d4e79] no-underline max-[640px]:text-[0.88rem]">
-            Portfolio
-          </a>
-          <a href="#contact" className="text-sm font-semibold text-[#5d4e79] no-underline max-[640px]:text-[0.88rem]">
-            Contact
-          </a>
-        </nav>
-      </header>
-
       <section className="relative h-[100svh] min-h-[560px] overflow-hidden">
         {carouselImages.map((src, index) => (
           <img
@@ -188,23 +223,31 @@ function App() {
             ].join(" ")}
           />
         ))}
+
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,8,26,0.46)_0%,rgba(13,8,26,0.56)_48%,rgba(13,8,26,0.72)_100%)]" />
+
         <button
           type="button"
           aria-label="Previous slide"
-          className="absolute left-3 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/35 bg-[rgba(9,8,18,0.32)] text-2xl text-white transition-[background-color,border-color] duration-200 hover:border-white/70 hover:bg-[rgba(9,8,18,0.52)]"
+          className="absolute left-2 top-1/2 z-20 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-white/45 bg-[rgba(14,12,26,0.42)] text-white shadow-[0_12px_28px_rgba(0,0,0,0.28)] backdrop-blur-md transition-[transform,background-color,border-color,box-shadow] duration-200 hover:-translate-y-1/2 hover:scale-[1.04] hover:border-white/75 hover:bg-[rgba(14,12,26,0.62)] hover:shadow-[0_16px_34px_rgba(0,0,0,0.34)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(14,12,26,0.55)] sm:left-4 sm:h-12 sm:w-12"
           onClick={() => cycleCarousel(-1)}
         >
-          &#8249;
+          <span aria-hidden="true" className="text-[1.2rem] leading-none sm:text-[1.6rem]">
+            &#8249;
+          </span>
         </button>
+
         <button
           type="button"
           aria-label="Next slide"
-          className="absolute right-3 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/35 bg-[rgba(9,8,18,0.32)] text-2xl text-white transition-[background-color,border-color] duration-200 hover:border-white/70 hover:bg-[rgba(9,8,18,0.52)]"
+          className="absolute right-2 top-1/2 z-20 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-white/45 bg-[rgba(14,12,26,0.42)] text-white shadow-[0_12px_28px_rgba(0,0,0,0.28)] backdrop-blur-md transition-[transform,background-color,border-color,box-shadow] duration-200 hover:-translate-y-1/2 hover:scale-[1.04] hover:border-white/75 hover:bg-[rgba(14,12,26,0.62)] hover:shadow-[0_16px_34px_rgba(0,0,0,0.34)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(14,12,26,0.55)] sm:right-4 sm:h-12 sm:w-12"
           onClick={() => cycleCarousel(1)}
         >
-          &#8250;
+          <span aria-hidden="true" className="text-[1.2rem] leading-none sm:text-[1.6rem]">
+            &#8250;
+          </span>
         </button>
+
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
           <img
             src="/logos/logo.png"
@@ -227,6 +270,7 @@ function App() {
             <span className="block">Built Perfect.</span>
             <span className="block">Finished Better.</span>
           </h1>
+
           <div className="max-w-[66ch] lg:max-w-full">
             <div
               className={[
@@ -234,30 +278,11 @@ function App() {
                 isAboutExpanded ? "max-h-[120rem]" : "max-h-[10.5rem] about-collapse-mask"
               ].join(" ")}
             >
-              <p className="mb-4">
-                We believe great construction is about more than building - it&apos;s about creating spaces that
-                improve the way people live and work. Based in London, we specialise in high-quality renovation,
-                refurbishment, and building completion services, helping homeowners, landlords, and developers
-                transform properties with confidence.
-              </p>
-              <p className="mb-4">
-                Our team is passionate about delivering projects that combine craftsmanship, thoughtful design, and
-                lasting quality. From the earliest planning stages through to the final finishes, we take pride in
-                ensuring every detail is completed with care and professionalism. Whether it&apos;s a full property
-                renovation, an interior refurbishment, or external improvements, we approach every project with the
-                same commitment to excellence.
-              </p>
-              <p className="mb-4">
-                As a member of the Federation of Master Builders, we are proud to be recognised as part of one of the
-                UK&apos;s most respected construction organisations. This reflects our dedication to maintaining high
-                industry standards, delivering reliable workmanship, and providing a service our clients can trust.
-              </p>
-              <p className="mb-0">
-                We understand that every property project is a significant investment. That&apos;s why we focus on
-                clear communication, dependable timelines, and results that genuinely enhance both the value and
-                functionality of a space. Our goal is always to exceed expectations and leave our clients with a
-                finished project they can be proud of.
-              </p>
+              {ABOUT_PARAGRAPHS.map((paragraph, index) => (
+                <p key={paragraph} className={index === ABOUT_PARAGRAPHS.length - 1 ? "mb-0" : "mb-4"}>
+                  {paragraph}
+                </p>
+              ))}
             </div>
             <button
               type="button"
@@ -268,9 +293,10 @@ function App() {
               {isAboutExpanded ? "Read less" : "Read more"}
             </button>
           </div>
+
           <div className="my-6 flex flex-wrap gap-3">
             <a
-              href="#portfolio"
+              href="#/portfolio"
               className="inline-block rounded-full bg-[#6c3fe1] px-5 py-3 text-sm font-bold text-white no-underline transition-transform duration-200 hover:-translate-y-px hover:bg-[#4f2ab7]"
             >
               View Portfolio
@@ -279,7 +305,7 @@ function App() {
               href="#contact"
               className="inline-block rounded-full border border-[#24183a24] px-5 py-3 text-sm font-bold text-[#24183a] no-underline transition-transform duration-200 hover:-translate-y-px"
             >
-              Contac Us
+              Contact Us
             </a>
           </div>
         </section>
@@ -293,129 +319,29 @@ function App() {
               Residential Building Services We Deliver
             </h2>
           </div>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-            <article className="rounded-[18px] border border-[#24183a24] bg-white p-5 shadow-[0_24px_60px_rgba(29,14,56,0.14)]">
-              <span className="text-sm font-extrabold text-[#4f2ab7]">01</span>
-              <h3 className="mb-2 mt-1 text-xl font-bold text-[#24183a]">Home Renovation Planning</h3>
-              <p className="text-[#5d4e79]">We assess your property, define renovation scope, and build a practical delivery plan.</p>
-            </article>
-            <article className="rounded-[18px] border border-[#24183a24] bg-white p-5 shadow-[0_24px_60px_rgba(29,14,56,0.14)]">
-              <span className="text-sm font-extrabold text-[#4f2ab7]">02</span>
-              <h3 className="mb-2 mt-1 text-xl font-bold text-[#24183a]">Structural Building Works</h3>
-              <p className="text-[#5d4e79]">
-                We manage construction works, material quality, and milestone tracking in house, ensuring a high quality of work.
-              </p>
-            </article>
-            <article className="rounded-[18px] border border-[#24183a24] bg-white p-5 shadow-[0_24px_60px_rgba(29,14,56,0.14)]">
-              <span className="text-sm font-extrabold text-[#4f2ab7]">03</span>
-              <h3 className="mb-2 mt-1 text-xl font-bold text-[#24183a]">Refurbishment & Finishing</h3>
-              <p className="text-[#5d4e79]">We complete premium interior and exterior finishes to elevate long-term property value.</p>
-            </article>
-          </div>
-        </section>
 
-        <section id="portfolio" className="reveal pt-[clamp(2rem,5vw,4rem)]">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">Portfolio</p>
-              <h2 className="mb-0 text-[clamp(1.4rem,2.8vw,2.2rem)] font-bold text-[#24183a]">Built Work Gallery</h2>
-            </div>
-            <div
-              className="flex translate-y-[0.45rem] gap-1 rounded-full bg-[#efe9ff] p-1 max-[640px]:w-full max-[640px]:translate-y-0 max-[640px]:justify-between"
-              role="tablist"
-              aria-label="Portfolio category"
-            >
-              <button
-                className={[
-                  "cursor-pointer rounded-full border-0 px-4 py-2 text-sm font-bold",
-                  activeCategory === "finishes" ? "bg-white text-[#24183a]" : "bg-transparent text-[#5d4e79]"
-                ].join(" ")}
-                data-filter="finishes"
-                role="tab"
-                aria-selected={activeCategory === "finishes"}
-                onClick={() => setActiveCategory("finishes")}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {SERVICES.map((service) => (
+              <article
+                key={service.number}
+                className="rounded-[18px] border border-[#24183a24] bg-white p-5 shadow-[0_24px_60px_rgba(29,14,56,0.14)]"
               >
-                Finished Projects
-              </button>
-              <button
-                className={[
-                  "cursor-pointer rounded-full border-0 px-4 py-2 text-sm font-bold",
-                  activeCategory === "works" ? "bg-white text-[#24183a]" : "bg-transparent text-[#5d4e79]"
-                ].join(" ")}
-                data-filter="works"
-                role="tab"
-                aria-selected={activeCategory === "works"}
-                onClick={() => setActiveCategory("works")}
-              >
-                Construction Process
-              </button>
-            </div>
-          </div>
-
-          <div
-            className="relative mt-5 overflow-hidden transition-[height] duration-[420ms] ease-[cubic-bezier(0.22,0.61,0.36,1)]"
-            aria-live="polite"
-            style={{ height: galleryHeight > 0 ? `${galleryHeight}px` : undefined }}
-          >
-            <div
-              ref={finishesRef}
-              className={[
-                "absolute left-0 right-0 top-0 grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-3 transition-all duration-300 max-[640px]:grid-cols-2 max-[640px]:gap-[0.7rem]",
-                activeCategory === "finishes" ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
-              ].join(" ")}
-            >
-              {finishImages.map((image) => (
-                <figure
-                  className="m-0 cursor-pointer overflow-hidden rounded-[14px] border border-[#24183a24] bg-white shadow-[0_8px_24px_rgba(9,21,15,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(9,21,15,0.2)]"
-                  key={image.src}
-                  onClick={() => setLightbox(image)}
-                >
-                  <img
-                    loading="lazy"
-                    src={image.src}
-                    alt={image.alt}
-                    onLoad={handleImageLoad}
-                    className="block aspect-[4/3] w-full object-cover"
-                  />
-                  <figcaption className="px-3 py-3 text-[0.92rem] text-[#5d4e79]">{image.caption}</figcaption>
-                </figure>
-              ))}
-            </div>
-            <div
-              ref={worksRef}
-              className={[
-                "absolute left-0 right-0 top-0 grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-3 transition-all duration-300 max-[640px]:grid-cols-2 max-[640px]:gap-[0.7rem]",
-                activeCategory === "works" ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
-              ].join(" ")}
-            >
-              {workImages.map((image) => (
-                <figure
-                  className="m-0 cursor-pointer overflow-hidden rounded-[14px] border border-[#24183a24] bg-white shadow-[0_8px_24px_rgba(9,21,15,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(9,21,15,0.2)]"
-                  key={image.src}
-                  onClick={() => setLightbox(image)}
-                >
-                  <img
-                    loading="lazy"
-                    src={image.src}
-                    alt={image.alt}
-                    onLoad={handleImageLoad}
-                    className="block aspect-[4/3] w-full bg-[#f3efff] object-contain"
-                  />
-                  <figcaption className="px-3 py-3 text-[0.92rem] text-[#5d4e79]">{image.caption}</figcaption>
-                </figure>
-              ))}
-            </div>
+                <span className="text-sm font-extrabold text-[#4f2ab7]">{service.number}</span>
+                <h3 className="mb-2 mt-1 text-xl font-bold text-[#24183a]">{service.title}</h3>
+                <p className="text-[#5d4e79]">{service.description}</p>
+              </article>
+            ))}
           </div>
         </section>
 
         <section id="contact" className="reveal pt-[clamp(2rem,5vw,4rem)]">
           <div className="rounded-[18px] border border-[#24183a24] bg-gradient-to-br from-white to-[#f2ecff] p-[clamp(1.1rem,4vw,2rem)]">
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">Let's Build</p>
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">Let&apos;s Build</p>
             <h2 className="mb-4 text-[clamp(1.4rem,2.8vw,2.2rem)] font-bold text-[#24183a]">
               Plan Your Next Development With RJP Innovations
             </h2>
             <p className="mb-5 max-w-[54ch] text-[#5d4e79]">
-              Share your project requirements and we'll guide you from concept to completion.
+              Share your project requirements and we&apos;ll guide you from concept to completion.
             </p>
             <a
               className="inline-block rounded-full bg-[#6c3fe1] px-5 py-3 text-sm font-bold text-white no-underline transition-transform duration-200 hover:-translate-y-px hover:bg-[#4f2ab7]"
@@ -428,13 +354,125 @@ function App() {
           </div>
         </section>
       </main>
+    </>
+  );
+}
+
+function PortfolioPage() {
+  const [selectedProjectName, setSelectedProjectName] = useState<string>("");
+  const [lightbox, setLightbox] = useState<GalleryImage | null>(null);
+
+  const projectGroups = useMemo<ProjectGroup[]>(() => imageManifest.projects, []);
+  const selectedProject = useMemo(
+    () => projectGroups.find((project) => project.name === selectedProjectName) ?? null,
+    [projectGroups, selectedProjectName]
+  );
+  const selectedProjectImages = useMemo(
+    () => (selectedProject ? mapProjectToGallery(selectedProject) : []),
+    [selectedProject]
+  );
+
+  useEffect(() => {
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setLightbox(null);
+      }
+    };
+
+    window.addEventListener("keydown", onEscape);
+    return () => window.removeEventListener("keydown", onEscape);
+  }, []);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    if (lightbox) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = previousOverflow;
+    }
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [lightbox]);
+
+  return (
+    <>
+      <main className="mx-auto w-[min(1100px,calc(100%-2rem))] pb-12 pt-[6.2rem] max-[640px]:w-[calc(100%-1rem)] max-[640px]:pt-[5.4rem]">
+        <section className="pt-2">
+          {!selectedProject ? (
+            <>
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">Portfolio</p>
+                  <h1 className="mb-0 text-[clamp(1.5rem,3vw,2.3rem)] font-bold text-[#24183a]">Built Work Gallery</h1>
+                </div>
+              </div>
+
+              <div className="mt-5 grid grid-cols-1 gap-3 px-1 pb-3 pt-3 sm:grid-cols-2 lg:grid-cols-3">
+                {projectGroups.map((project) => (
+                  <button
+                    key={project.name}
+                    type="button"
+                    className="cursor-pointer overflow-hidden rounded-[14px] border border-[#24183a24] bg-white text-left shadow-[0_8px_24px_rgba(9,21,15,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(9,21,15,0.2)]"
+                    onClick={() => setSelectedProjectName(project.name)}
+                  >
+                    {project.images[0] && (
+                      <img
+                        src={project.images[0]}
+                        alt={`${project.name} project preview`}
+                        className="block aspect-[4/3] w-full object-cover"
+                        loading="lazy"
+                      />
+                    )}
+                    <div className="p-4">
+                      <h3 className="m-0 text-base font-bold text-[#24183a]">{project.name}</h3>
+                      <p className="mt-1 text-sm text-[#5d4e79]">
+                        {project.images.length} {project.images.length === 1 ? "image" : "images"}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">Project</p>
+                  <h1 className="mb-0 text-[clamp(1.5rem,3vw,2.3rem)] font-bold text-[#24183a]">{selectedProject.name}</h1>
+                </div>
+                <button
+                  type="button"
+                  className="cursor-pointer rounded-full border border-[#24183a24] bg-white px-4 py-2 text-sm font-bold text-[#24183a] transition-transform duration-200 hover:-translate-y-px"
+                  onClick={() => setSelectedProjectName("")}
+                >
+                  Back to projects
+                </button>
+              </div>
+
+              <div className="mt-5 grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-3 px-1 pb-3 pt-3 max-[640px]:grid-cols-2 max-[640px]:gap-[0.7rem]">
+                {selectedProjectImages.map((image) => (
+                  <figure
+                    className="m-0 cursor-pointer overflow-hidden rounded-[14px] border border-[#24183a24] bg-white shadow-[0_8px_24px_rgba(9,21,15,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(9,21,15,0.2)]"
+                    key={image.src}
+                    onClick={() => setLightbox(image)}
+                  >
+                    <img loading="lazy" src={image.src} alt={image.alt} className="block aspect-[4/3] w-full object-cover" />
+                    <figcaption className="px-3 py-3 text-[0.92rem] text-[#5d4e79]">{image.caption}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            </>
+          )}
+        </section>
+      </main>
 
       <div
         className={[
           "fixed inset-0 z-40 grid place-items-center bg-[rgba(6,9,8,0.86)] p-4 transition-opacity duration-200",
           lightbox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         ].join(" ")}
-        id="lightbox"
         aria-hidden={lightbox ? "false" : "true"}
         onClick={(event) => {
           if (event.target === event.currentTarget) {
@@ -459,6 +497,75 @@ function App() {
             <p className="mt-2 text-center text-[#e7ece8]">{lightbox.caption}</p>
           </>
         )}
+      </div>
+    </>
+  );
+}
+function App() {
+  const [route, setRoute] = useState<Route>(getRouteFromHash());
+  const [isRouteVisible, setIsRouteVisible] = useState(true);
+  const routeRef = useRef<Route>(route);
+  const routeSwapTimerRef = useRef<number | null>(null);
+  const routeFadeFrameRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    routeRef.current = route;
+  }, [route]);
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const nextRoute = getRouteFromHash();
+      if (nextRoute === routeRef.current) {
+        return;
+      }
+
+      setIsRouteVisible(false);
+
+      if (routeSwapTimerRef.current !== null) {
+        window.clearTimeout(routeSwapTimerRef.current);
+      }
+      if (routeFadeFrameRef.current !== null) {
+        window.cancelAnimationFrame(routeFadeFrameRef.current);
+      }
+
+      routeSwapTimerRef.current = window.setTimeout(() => {
+        setRoute(nextRoute);
+        window.scrollTo({ top: 0, behavior: "auto" });
+        routeFadeFrameRef.current = window.requestAnimationFrame(() => {
+          setIsRouteVisible(true);
+        });
+      }, ROUTE_FADE_MS);
+    };
+
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (routeSwapTimerRef.current !== null) {
+        window.clearTimeout(routeSwapTimerRef.current);
+      }
+      if (routeFadeFrameRef.current !== null) {
+        window.cancelAnimationFrame(routeFadeFrameRef.current);
+      }
+    },
+    []
+  );
+
+  return (
+    <>
+      <Analytics />
+      <div className="fixed -left-20 top-24 -z-10 h-80 w-80 rounded-full bg-[#b69bff] opacity-35 blur-[70px]" />
+      <div className="fixed -right-28 -bottom-10 -z-10 h-[360px] w-[360px] rounded-full bg-[#d2beff] opacity-35 blur-[70px]" />
+      <SiteHeader route={route} />
+      <div
+        className={[
+          "transition-opacity duration-[220ms]",
+          isRouteVisible ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        ].join(" ")}
+      >
+        {route === "portfolio" ? <PortfolioPage /> : <HomePage />}
       </div>
     </>
   );
