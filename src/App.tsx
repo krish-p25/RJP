@@ -412,7 +412,7 @@ function HomePage() {
         </button>
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
-          <div className="grid h-[min(120px,34vw)] w-[min(220px,62vw)] place-items-center sm:h-[min(180px,26vw)] sm:w-[min(320px,78vw)]">
+          <div className="grid w-[min(220px,62vw)] place-items-center  sm:w-[min(320px,78vw)]">
             <img
               src="/logos/logo.png"
               alt="RJP Innovations logo"
