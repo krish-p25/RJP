@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Manrope", "Avenir Next", "Segoe UI", sans-serif;
+    color: #24183a;
+    background:
+      radial-gradient(circle at 10% 0%, #ece5ff 0, transparent 35%),
+      radial-gradient(circle at 90% 15%, #f2edff 0, transparent 28%),
+      #f8f6ff;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 550ms ease, transform 550ms ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
