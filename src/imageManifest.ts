@@ -161,22 +161,6 @@ export const imageManifest: ImageManifest = {
           ]
         }
       ]
-    },
-    {
-      "name": "Stanmore",
-      "images": [
-        "/projects/Stanmore/2.jpg",
-        "/projects/Stanmore/3.jpg",
-        "/projects/Stanmore/4.jpg",
-        "/projects/Stanmore/5.jpg",
-        "/projects/Stanmore/6.jpg",
-        "/projects/Stanmore/7.jpg",
-        "/projects/Stanmore/8.jpg",
-        "/projects/Stanmore/9.jpg",
-        "/projects/Stanmore/10.jpg",
-        "/projects/Stanmore/thumbnail.jpg"
-      ],
-      "sections": []
     }
   ]
 };
