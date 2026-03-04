@@ -47,7 +47,7 @@ export const SERVICES: ServiceItem[] = [
 ];
 
 export const HEADER_BASE_CLASSES =
-  "fixed left-1/2 z-20 flex -translate-x-1/2 items-center justify-between border backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]";
+  "fixed left-1/2 z-20 flex -translate-x-1/2 items-center justify-between border backdrop-blur-md transition-[top,width,max-width,padding,background-color,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] [transition:top_500ms_cubic-bezier(0.25,0.46,0.45,0.94),width_500ms_cubic-bezier(0.25,0.46,0.45,0.94),max-width_500ms_cubic-bezier(0.25,0.46,0.45,0.94),padding_500ms_cubic-bezier(0.25,0.46,0.45,0.94),background-color_500ms_cubic-bezier(0.25,0.46,0.45,0.94),border-color_500ms_cubic-bezier(0.25,0.46,0.45,0.94),box-shadow_500ms_cubic-bezier(0.25,0.46,0.45,0.94),border-radius_700ms_cubic-bezier(0.34,1.56,0.64,1)]";
 
 export const HEADER_SCROLLED_CLASSES =
   "top-3 w-[calc(100%-1.4rem)] max-w-[1040px] rounded-full border-[#4f2ab733] bg-white/65 px-4 py-3 shadow-[0_14px_35px_rgba(30,14,59,0.16)] md:px-6 lg:px-10 max-[640px]:top-[0.55rem] max-[640px]:w-[calc(100%-0.8rem)]";

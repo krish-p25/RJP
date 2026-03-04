@@ -39,6 +39,11 @@ export function PortfolioPage() {
     );
   }, [selectedProject]);
 
+  // Scroll to top when portfolio page first loads
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
+
   useEffect(() => {
     if (projectName && !selectedProject) {
       navigate("/portfolio", { replace: true });
