@@ -103,17 +103,24 @@ export function HomePage() {
   return (
     <>
       <section className="relative h-[100svh] min-h-[560px] overflow-hidden">
-        {carouselImages.map((src, index) => (
-          <img
-            key={src}
-            src={src}
-            alt="Featured completed renovation project by RJP Innovations"
-            className={[
-              "absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,0.61,0.36,1)]",
-              index === carouselIndex ? "opacity-100" : "opacity-0"
-            ].join(" ")}
-          />
-        ))}
+        {carouselImages.map((src, index) => {
+          // Cycle through different Ken Burns effects for visual variety
+          const animations = ["ken-burns-zoom-in", "ken-burns-pan-right", "ken-burns-zoom-out", "ken-burns-pan-left"];
+          const animationClass = animations[index % animations.length];
+
+          return (
+            <img
+              key={src}
+              src={src}
+              alt="Featured completed renovation project by RJP Innovations"
+              className={[
+                "absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,0.61,0.36,1)]",
+                animationClass,
+                index === carouselIndex ? "opacity-100" : "opacity-0"
+              ].join(" ")}
+            />
+          );
+        })}
 
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,8,26,0.46)_0%,rgba(13,8,26,0.56)_48%,rgba(13,8,26,0.72)_100%)]" />
 
