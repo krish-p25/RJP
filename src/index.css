@@ -61,4 +61,57 @@
     -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
     mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
   }
+
+  /* Ken Burns effect animations for carousel */
+  .ken-burns-zoom-in {
+    animation: kenBurnsZoomIn 16s ease-out infinite alternate;
+  }
+
+  .ken-burns-zoom-out {
+    animation: kenBurnsZoomOut 16s ease-in-out infinite alternate;
+  }
+
+  .ken-burns-pan-left {
+    animation: kenBurnsPanLeft 18s ease-in-out infinite alternate;
+  }
+
+  .ken-burns-pan-right {
+    animation: kenBurnsPanRight 18s ease-in-out infinite alternate;
+  }
+
+  @keyframes kenBurnsZoomIn {
+    0% {
+      transform: scale(1) translate(0, 0);
+    }
+    100% {
+      transform: scale(1.28) translate(-3%, 2%);
+    }
+  }
+
+  @keyframes kenBurnsZoomOut {
+    0% {
+      transform: scale(1.28) translate(3%, -2%);
+    }
+    100% {
+      transform: scale(1) translate(0, 0);
+    }
+  }
+
+  @keyframes kenBurnsPanLeft {
+    0% {
+      transform: scale(1.22) translateX(6%);
+    }
+    100% {
+      transform: scale(1.22) translateX(-6%);
+    }
+  }
+
+  @keyframes kenBurnsPanRight {
+    0% {
+      transform: scale(1.22) translateX(-6%);
+    }
+    100% {
+      transform: scale(1.22) translateX(6%);
+    }
+  }
 }
