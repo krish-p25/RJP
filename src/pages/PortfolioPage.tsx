@@ -9,7 +9,7 @@ import { mapImagesToGallery, getProjectCoverImage, getProjectImageCount } from "
 export function PortfolioPage() {
   const { projectName } = useParams<{ projectName?: string }>();
   const navigate = useNavigate();
-  const [lightbox, setLightbox] = useState<GalleryImage | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [sectionOpenState, setSectionOpenState] = useState<Record<string, boolean>>({});
   const previousProjectNameRef = useRef<string | undefined>(projectName);
 
@@ -38,6 +38,52 @@ export function PortfolioPage() {
       (section): section is ProjectSection => Boolean(section)
     );
   }, [selectedProject]);
+
+  // Flatten all visible images for lightbox navigation
+  const allVisibleImages = useMemo(() => {
+    if (!selectedProject) return [];
+
+    if (selectedProjectSections.length > 0) {
+      // When there are sections, include images from open sections only
+      const images: GalleryImage[] = [];
+      selectedProjectSections.forEach((section) => {
+        const sectionKey = section.name.toLowerCase();
+        const isOpen = sectionOpenState[sectionKey];
+        if (isOpen) {
+          images.push(...mapImagesToGallery(section.images, selectedProject.name, section.name));
+        }
+      });
+      return images;
+    } else {
+      // When no sections, return direct project images
+      return selectedProjectImages;
+    }
+  }, [selectedProject, selectedProjectSections, selectedProjectImages, sectionOpenState]);
+
+  const currentLightboxImage = lightboxIndex !== null ? allVisibleImages[lightboxIndex] : null;
+
+  const handleNextImage = () => {
+    if (lightboxIndex !== null && lightboxIndex < allVisibleImages.length - 1) {
+      setLightboxIndex(lightboxIndex + 1);
+    }
+  };
+
+  const handlePreviousImage = () => {
+    if (lightboxIndex !== null && lightboxIndex > 0) {
+      setLightboxIndex(lightboxIndex - 1);
+    }
+  };
+
+  const handleCloseLightbox = () => {
+    setLightboxIndex(null);
+  };
+
+  const openLightbox = (image: GalleryImage) => {
+    const index = allVisibleImages.findIndex((img) => img.src === image.src);
+    if (index !== -1) {
+      setLightboxIndex(index);
+    }
+  };
 
   // Scroll to top when portfolio page first loads
   useEffect(() => {
@@ -186,7 +232,7 @@ export function PortfolioPage() {
                                   <figure
                                     className="m-0 cursor-pointer overflow-hidden rounded-[14px] border border-[#24183a24] bg-white shadow-[0_8px_24px_rgba(9,21,15,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(9,21,15,0.2)]"
                                     key={image.src}
-                                    onClick={() => setLightbox(image)}
+                                    onClick={() => openLightbox(image)}
                                   >
                                     <ImageWithSkeleton
                                       loading="lazy"
@@ -210,7 +256,7 @@ export function PortfolioPage() {
                     <figure
                       className="m-0 cursor-pointer overflow-hidden rounded-[14px] border border-[#24183a24] bg-white shadow-[0_8px_24px_rgba(9,21,15,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(9,21,15,0.2)]"
                       key={image.src}
-                      onClick={() => setLightbox(image)}
+                      onClick={() => openLightbox(image)}
                     >
                       <ImageWithSkeleton
                         loading="lazy"
@@ -229,7 +275,14 @@ export function PortfolioPage() {
         </section>
       </main>
 
-      <Lightbox image={lightbox} onClose={() => setLightbox(null)} />
+      <Lightbox
+        image={currentLightboxImage}
+        onClose={handleCloseLightbox}
+        onNext={handleNextImage}
+        onPrevious={handlePreviousImage}
+        hasNext={lightboxIndex !== null && lightboxIndex < allVisibleImages.length - 1}
+        hasPrevious={lightboxIndex !== null && lightboxIndex > 0}
+      />
     </>
   );
 }
