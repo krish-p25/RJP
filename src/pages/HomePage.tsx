@@ -102,9 +102,9 @@ export function HomePage() {
 
   return (
     <>
+      {/* Full-screen carousel hero */}
       <section className="relative h-[100svh] min-h-[560px] overflow-hidden">
         {carouselImages.map((src, index) => {
-          // Cycle through different Ken Burns effects for visual variety
           const animations = ["ken-burns-zoom-in", "ken-burns-pan-right", "ken-burns-zoom-out", "ken-burns-pan-left"];
           const animationClass = animations[index % animations.length];
 
@@ -147,7 +147,7 @@ export function HomePage() {
         </button>
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
-          <div className="grid w-[min(220px,62vw)] place-items-center  sm:w-[min(320px,78vw)]">
+          <div className="grid w-[min(220px,62vw)] place-items-center sm:w-[min(320px,78vw)]">
             <img
               src="/logos/logo.png"
               alt="RJP Innovations logo"
@@ -170,98 +170,107 @@ export function HomePage() {
         </div>
       </section>
 
-      <main className="mx-auto w-[min(1100px,calc(100%-2rem))] pb-12 pt-[clamp(3.8rem,5.8vw,4.4rem)] max-[640px]:w-[calc(100%-1rem)] max-[640px]:pt-[3.4rem]">
-        <section className="reveal pb-0 pt-[clamp(3rem,7vw,6rem)] max-[640px]:pt-[1.1rem]">
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">
-            Building Contractor, Renovation & Property Development
-          </p>
-          <h1 className="mb-4 max-w-[20ch] text-[clamp(2rem,5vw,3.8rem)] font-extrabold leading-[1.08] text-[#24183a]">
-            <span className="block">Built Perfect.</span>
-            <span className="block">Finished Better.</span>
-          </h1>
+      {/* Main content — white card floats below hero with breathing room */}
+      <main className="pb-12">
+        {/* Intro card */}
+        <div className="mx-auto w-[min(1100px,calc(100%-2rem))] pt-5 max-[640px]:w-[calc(100%-1rem)] max-[640px]:pt-4">
+          <section className="reveal rounded-[20px] border border-[rgba(108,63,225,0.08)] bg-white p-7 shadow-[0_-4px_40px_rgba(79,42,183,0.09),0_8px_32px_rgba(79,42,183,0.08)] max-[640px]:p-5">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#4f2ab7]">
+              Building Contractor, Renovation & Property Development
+            </p>
+            <h1 className="mb-4 max-w-[20ch] font-fraunces text-[clamp(2rem,5vw,3.8rem)] font-bold leading-[1.08] tracking-[-0.02em] text-[#24183a]">
+              <span className="block">Built Perfect.</span>
+              <span className="block">Finished Better.</span>
+            </h1>
 
-          <div className="max-w-[66ch] lg:max-w-full">
-            <div
-              className={[
-                "relative overflow-hidden text-[clamp(1rem,1.7vw,1.2rem)] text-[#5d4e79] transition-[max-height] duration-500 ease-[cubic-bezier(0.22,0.61,0.36,1)]",
-                isAboutExpanded ? "max-h-[120rem]" : "max-h-[10.5rem] about-collapse-mask"
-              ].join(" ")}
-            >
-              {ABOUT_PARAGRAPHS.map((paragraph, index) => (
-                <p key={paragraph} className={index === ABOUT_PARAGRAPHS.length - 1 ? "mb-0" : "mb-4"}>
-                  {paragraph}
-                </p>
+            <div className="max-w-[66ch] lg:max-w-full">
+              <div
+                className={[
+                  "relative overflow-hidden text-[clamp(1rem,1.7vw,1.2rem)] font-light text-[#5d4e79] transition-[max-height] duration-500 ease-[cubic-bezier(0.22,0.61,0.36,1)]",
+                  isAboutExpanded ? "max-h-[120rem]" : "max-h-[10.5rem] about-collapse-mask"
+                ].join(" ")}
+              >
+                {ABOUT_PARAGRAPHS.map((paragraph, index) => (
+                  <p key={paragraph} className={index === ABOUT_PARAGRAPHS.length - 1 ? "mb-0" : "mb-4"}>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="mt-2 cursor-pointer border-0 bg-transparent p-0 text-sm font-semibold text-[#4f2ab7] transition-opacity duration-200 hover:opacity-75"
+                onClick={() => setIsAboutExpanded((current) => !current)}
+                aria-expanded={isAboutExpanded}
+              >
+                {isAboutExpanded ? "Read less" : "Read more"}
+              </button>
+            </div>
+
+            <div className="my-6 flex flex-wrap gap-3">
+              <Link
+                to="/portfolio"
+                className="inline-block rounded-lg bg-[#6c3fe1] px-5 py-3 text-sm font-semibold text-white no-underline transition-transform duration-200 hover:-translate-y-px hover:bg-[#4f2ab7]"
+              >
+                View Portfolio
+              </Link>
+              <a
+                href="#contact"
+                className="inline-block rounded-lg border border-[#24183a24] px-5 py-3 text-sm font-medium text-[#24183a] no-underline transition-transform duration-200 hover:-translate-y-px"
+              >
+                Contact Us
+              </a>
+            </div>
+          </section>
+        </div>
+
+        {/* Services + Contact */}
+        <div className="mx-auto w-[min(1100px,calc(100%-2rem))] max-[640px]:w-[calc(100%-1rem)]">
+          <section id="process" className="reveal mt-0 pt-[clamp(2rem,5vw,4rem)]">
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#4f2ab7]">
+                Construction & Renovation Services
+              </p>
+              <h2 className="mb-6 font-fraunces text-[clamp(1.4rem,2.8vw,2.2rem)] font-bold tracking-[-0.01em] text-[#24183a]">
+                Residential Building Services We Deliver
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {SERVICES.map((service) => (
+                <article
+                  key={service.number}
+                  className="rounded-[14px] border border-[rgba(108,63,225,0.1)] bg-white p-5 shadow-[0_2px_16px_rgba(79,42,183,0.08)]"
+                >
+                  <span className="font-fraunces text-sm font-light italic text-[#6c3fe1]">{service.number}</span>
+                  <h3 className="mb-2 mt-1 font-fraunces text-xl font-semibold leading-[1.2] text-[#24183a]">{service.title}</h3>
+                  <p className="text-sm font-light leading-relaxed text-[#5d4e79]">{service.description}</p>
+                </article>
               ))}
             </div>
-            <button
-              type="button"
-              className="mt-2 cursor-pointer border-0 bg-transparent p-0 text-sm font-bold text-[#4f2ab7] transition-opacity duration-200 hover:opacity-75"
-              onClick={() => setIsAboutExpanded((current) => !current)}
-              aria-expanded={isAboutExpanded}
-            >
-              {isAboutExpanded ? "Read less" : "Read more"}
-            </button>
-          </div>
+          </section>
 
-          <div className="my-6 flex flex-wrap gap-3">
-            <Link
-              to="/portfolio"
-              className="inline-block rounded-full bg-[#6c3fe1] px-5 py-3 text-sm font-bold text-white no-underline transition-transform duration-200 hover:-translate-y-px hover:bg-[#4f2ab7]"
-            >
-              View Portfolio
-            </Link>
-            <a
-              href="#contact"
-              className="inline-block rounded-full border border-[#24183a24] px-5 py-3 text-sm font-bold text-[#24183a] no-underline transition-transform duration-200 hover:-translate-y-px"
-            >
-              Contact Us
-            </a>
-          </div>
-        </section>
-
-        <section id="process" className="reveal mt-0 pt-[clamp(2rem,5vw,4rem)]">
-          <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">
-              Construction & Renovation Services
-            </p>
-            <h2 className="mb-4 text-[clamp(1.4rem,2.8vw,2.2rem)] font-bold text-[#24183a]">
-              Residential Building Services We Deliver
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {SERVICES.map((service) => (
-              <article
-                key={service.number}
-                className="rounded-[18px] border border-[#24183a24] bg-white p-5 shadow-[0_24px_60px_rgba(29,14,56,0.14)]"
+          <section id="contact" className="reveal pt-[clamp(2rem,5vw,4rem)]">
+            <div className="rounded-[16px] border border-[rgba(108,63,225,0.1)] bg-white p-[clamp(1.4rem,4vw,2rem)] shadow-[0_2px_16px_rgba(79,42,183,0.08)] sm:flex sm:items-center sm:justify-between sm:gap-8">
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#4f2ab7]">Let&apos;s Build</p>
+                <h2 className="mb-3 font-fraunces text-[clamp(1.4rem,2.8vw,2rem)] font-bold tracking-[-0.01em] text-[#24183a]">
+                  Plan Your Next Development With RJP Innovations
+                </h2>
+                <p className="mb-5 max-w-[54ch] text-sm font-light text-[#5d4e79] sm:mb-0">
+                  Share your project requirements and we&apos;ll guide you from concept to completion.
+                </p>
+              </div>
+              <a
+                className="inline-block shrink-0 rounded-lg bg-[#6c3fe1] px-5 py-3 text-sm font-semibold text-white no-underline transition-transform duration-200 hover:-translate-y-px hover:bg-[#4f2ab7]"
+                href="https://api.whatsapp.com/send/?phone=447957306323&text=Hi%2C%20I%27m%20looking%20for%20a%20quote%20for%20some%20work%20on%20my%20property.%20Could%20you%20let%20me%20know%20if%20you%27re%20available%20to%20discuss%3F&type=phone_number&app_absent=0"
+                target="_blank"
+                rel="noreferrer"
               >
-                <span className="text-sm font-extrabold text-[#4f2ab7]">{service.number}</span>
-                <h3 className="mb-2 mt-1 text-xl font-bold text-[#24183a]">{service.title}</h3>
-                <p className="text-[#5d4e79]">{service.description}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section id="contact" className="reveal pt-[clamp(2rem,5vw,4rem)]">
-          <div className="rounded-[18px] border border-[#24183a24] bg-gradient-to-br from-white to-[#f2ecff] p-[clamp(1.1rem,4vw,2rem)]">
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">Let&apos;s Build</p>
-            <h2 className="mb-4 text-[clamp(1.4rem,2.8vw,2.2rem)] font-bold text-[#24183a]">
-              Plan Your Next Development With RJP Innovations
-            </h2>
-            <p className="mb-5 max-w-[54ch] text-[#5d4e79]">
-              Share your project requirements and we&apos;ll guide you from concept to completion.
-            </p>
-            <a
-              className="inline-block rounded-full bg-[#6c3fe1] px-5 py-3 text-sm font-bold text-white no-underline transition-transform duration-200 hover:-translate-y-px hover:bg-[#4f2ab7]"
-              href="https://api.whatsapp.com/send/?phone=447957306323&text=Hi%2C%20I%27m%20looking%20for%20a%20quote%20for%20some%20work%20on%20my%20property.%20Could%20you%20let%20me%20know%20if%20you%27re%20available%20to%20discuss%3F&type=phone_number&app_absent=0"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Message on WhatsApp
-            </a>
-          </div>
-        </section>
+                Message on WhatsApp
+              </a>
+            </div>
+          </section>
+        </div>
       </main>
     </>
   );
