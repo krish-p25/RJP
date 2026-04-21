@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RJP Innovations — Full Mockup v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e8e3f5; font-family: 'DM Sans', system-ui, sans-serif; padding: 32px 24px; color: #1a1330; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { color: #6b5f8a; font-size: 14px; margin-bottom: 28px; line-height: 1.5; }
+
+  .browser-frame {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(79,42,183,0.18), 0 4px 16px rgba(79,42,183,0.1);
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  .browser-chrome {
+    background: #f1eefb;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #ddd8f5;
+  }
+  .browser-dots { display: flex; gap: 5px; }
+  .browser-dots span { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #ffbd2e; }
+  .dot-green { background: #28c840; }
+  .browser-url { flex: 1; background: white; border-radius: 6px; padding: 4px 10px; font-size: 11px; color: #6b5f8a; font-family: system-ui; border: 1px solid #ddd8f5; }
+
+  /* Site root — position relative so fixed orbs are scoped */
+  .site {
+    background:
+      radial-gradient(circle at 10% 0%, #ece5ff 0, transparent 35%),
+      radial-gradient(circle at 90% 15%, #f2edff 0, transparent 28%),
+      #f8f6ff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Purple orbs — same as the original App.tsx blobs */
+  .orb-left {
+    position: absolute;
+    left: -40px;
+    top: 96px;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    background: #b69bff;
+    opacity: 0.35;
+    filter: blur(70px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb-right {
+    position: absolute;
+    right: -60px;
+    bottom: -20px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: #d2beff;
+    opacity: 0.35;
+    filter: blur(70px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Header */
+  .site-header {
+    position: relative;
+    z-index: 10;
+    padding: 14px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(248,246,255,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(79,42,183,0.1);
+  }
+  .header-logo { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; color: #1a1330; letter-spacing: -0.01em; }
+  .header-nav { display: flex; gap: 20px; }
+  .header-nav a { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: #5d4e79; text-decoration: none; }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    height: 420px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #1e1235 0%, #2a1848 50%, #3d2260 100%);
+    z-index: 1;
+  }
+  .hero-photo-sim {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 70% 40%, rgba(108,63,225,0.25) 0%, transparent 55%),
+      linear-gradient(145deg, #1e1235 0%, #2a1848 50%, #3d2260 100%);
+  }
+  .hero-photo-sim::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.012) 3px, rgba(255,255,255,0.012) 4px),
+      repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,255,255,0.008) 3px, rgba(255,255,255,0.008) 4px);
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      rgba(14,8,28,0.38) 0%,
+      rgba(14,8,28,0.28) 50%,
+      rgba(14,8,28,0.55) 85%,
+      rgba(14,8,28,0.72) 100%
+    );
+  }
+  .hero-logo-area {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-logo-box {
+    width: 64px;
+    height: 64px;
+    background: white;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  }
+  .hero-logo-inner {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #6c3fe1, #4f2ab7);
+    border-radius: 10px;
+  }
+  .hero-dots {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .hero-dot { width: 6px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.35); }
+  .hero-dot.active { width: 20px; background: rgba(255,255,255,0.9); }
+  .hero-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .hero-arrow.left { left: 14px; }
+  .hero-arrow.right { right: 14px; }
+
+  /* Content below hero */
+  .content-wrapper {
+    position: relative;
+    z-index: 2;
+    padding: 20px 20px 0;
+  }
+  .content-card {
+    background: white;
+    border-radius: 20px;
+    padding: 28px 28px 24px;
+    box-shadow: 0 -4px 40px rgba(79,42,183,0.09), 0 4px 24px rgba(79,42,183,0.07);
+    border: 1px solid rgba(108,63,225,0.08);
+  }
+  .eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #6c3fe1;
+    margin-bottom: 10px;
+  }
+  .headline {
+    font-family: 'Fraunces', serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.05;
+    color: #1a1330;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .body-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #5d4e79;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    max-width: 54ch;
+  }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-primary {
+    background: #6c3fe1;
+    color: white;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    display: inline-block;
+  }
+  .btn-secondary {
+    border: 1.5px solid rgba(36,24,58,0.18);
+    color: #1a1330;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-block;
+  }
+
+  /* Services */
+  .section { padding: 36px 20px; position: relative; z-index: 2; }
+  .section-header { margin-bottom: 20px; }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #1a1330;
+    letter-spacing: -0.01em;
+    margin-top: 8px;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .service-card {
+    background: white;
+    border-radius: 14px;
+    padding: 18px;
+    border: 1px solid rgba(108,63,225,0.1);
+    box-shadow: 0 2px 12px rgba(79,42,183,0.07);
+  }
+  .service-num {
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: #6c3fe1;
+    font-style: italic;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .service-title {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1330;
+    margin-bottom: 6px;
+    line-height: 1.25;
+  }
+  .service-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: #5d4e79;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  /* Contact */
+  .contact-section { padding: 0 20px 32px; position: relative; z-index: 2; }
+  .contact-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid rgba(108,63,225,0.1);
+    box-shadow: 0 2px 12px rgba(79,42,183,0.07);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+  .contact-card-text h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1330;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .contact-card-text p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #5d4e79;
+    line-height: 1.6;
+  }
+  .label-tag {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(108,63,225,0.08);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: #6c3fe1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+<h2>Updated mockup — orbs restored, card has breathing room</h2>
+<p class="subtitle">Purple orbs are back. The white card now sits with padding above it so it floats rather than sticking to the hero edge.</p>
+
+<div class="browser-frame">
+  <div class="browser-chrome">
+    <div class="browser-dots">
+      <span class="dot-red"></span>
+      <span class="dot-yellow"></span>
+      <span class="dot-green"></span>
+    </div>
+    <div class="browser-url">rjpinnovations.co.uk</div>
+  </div>
+
+  <div class="site">
+    <!-- Purple orbs (same as original) -->
+    <div class="orb-left"></div>
+    <div class="orb-right"></div>
+
+    <!-- Header -->
+    <div class="site-header">
+      <div class="header-logo">RJP Innovations</div>
+      <div class="header-nav">
+        <a href="#">Portfolio</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-photo-sim"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-logo-area">
+        <div class="hero-logo-box">
+          <div class="hero-logo-inner"></div>
+        </div>
+      </div>
+      <div class="hero-arrow left">‹</div>
+      <div class="hero-arrow right">›</div>
+      <div class="hero-dots">
+        <div class="hero-dot active"></div>
+        <div class="hero-dot"></div>
+        <div class="hero-dot"></div>
+      </div>
+    </div>
+
+    <!-- Overlapping card — padding-top creates breathing room above card -->
+    <div class="content-wrapper">
+      <div class="content-card">
+        <div class="eyebrow">Building Contractor · Renovation · London</div>
+        <div class="headline">Built Perfect.<br>Finished Better.</div>
+        <div class="body-text">
+          Based in London, we specialise in high-quality renovation, refurbishment, and building completion services — helping homeowners, landlords, and developers transform properties with confidence.
+        </div>
+        <div class="btn-row">
+          <div class="btn-primary">View Portfolio</div>
+          <div class="btn-secondary">Contact Us</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Services -->
+    <div class="section">
+      <div class="section-header">
+        <div class="eyebrow">Construction &amp; Renovation Services</div>
+        <div class="section-title">Residential Building Services We Deliver</div>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <span class="service-num">01</span>
+          <div class="service-title">Home Renovation Planning</div>
+          <div class="service-desc">Site review, scope of works, budget alignment, and timeline forecasting.</div>
+        </div>
+        <div class="service-card">
+          <span class="service-num">02</span>
+          <div class="service-title">Structural Building Works</div>
+          <div class="service-desc">Load-bearing alterations, steel installations, and structural modifications.</div>
+        </div>
+        <div class="service-card">
+          <span class="service-num">03</span>
+          <div class="service-title">Interior Refurbishment</div>
+          <div class="service-desc">Kitchens, bathrooms, flooring, joinery — quality materials and craftsmanship.</div>
+        </div>
+        <div class="service-card">
+          <span class="service-num">04</span>
+          <div class="service-title">Electrical &amp; Plumbing</div>
+          <div class="service-desc">Certified first and second-fix works coordinated within the build programme.</div>
+        </div>
+        <div class="service-card">
+          <span class="service-num">05</span>
+          <div class="service-title">External Improvements</div>
+          <div class="service-desc">Facade, rendering, drainage, and outdoor upgrades for weather resilience.</div>
+        </div>
+        <div class="service-card">
+          <span class="service-num">06</span>
+          <div class="service-title">Project Management</div>
+          <div class="service-desc">End-to-end supervision with regular client updates and milestone tracking.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="contact-section">
+      <div class="contact-card">
+        <div class="contact-card-text">
+          <div class="label-tag">Let's Build</div>
+          <h3>Plan Your Next Development</h3>
+          <p>Share your project requirements and we'll guide you from concept to completion.</p>
+        </div>
+        <div style="flex-shrink:0;">
+          <div class="btn-primary" style="white-space:nowrap;">Message on WhatsApp</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<p style="font-family:'DM Sans',sans-serif; font-size:13px; color:#6b5f8a; margin-top:20px; max-width:820px; margin-left:auto; margin-right:auto;">
+  Happy with this? Say yes and I'll write the spec and implementation plan.
+</p>
+</body>
+</html>
