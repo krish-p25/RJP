@@ -140,8 +140,8 @@ export function PortfolioPage() {
             <>
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">Portfolio</p>
-                  <h1 className="mb-0 text-[clamp(1.5rem,3vw,2.3rem)] font-bold text-[#24183a]">Built Work Gallery</h1>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#4f2ab7]">Portfolio</p>
+                  <h1 className="mb-0 font-fraunces text-[clamp(1.5rem,3vw,2.3rem)] font-bold tracking-[-0.01em] text-[#24183a]">Built Work Gallery</h1>
                 </div>
               </div>
 
@@ -163,7 +163,7 @@ export function PortfolioPage() {
                       />
                     )}
                     <div className="p-4">
-                      <h3 className="m-0 text-base font-bold text-[#24183a]">{project.name}</h3>
+                      <h3 className="m-0 font-fraunces text-base font-semibold text-[#24183a]">{project.name}</h3>
                       <p className="mt-1 text-sm text-[#5d4e79]">
                         {getProjectImageCount(project)} {getProjectImageCount(project) === 1 ? "image" : "images"}
                       </p>
@@ -176,12 +176,12 @@ export function PortfolioPage() {
             <>
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#4f2ab7]">Project</p>
-                  <h1 className="mb-0 text-[clamp(1.5rem,3vw,2.3rem)] font-bold text-[#24183a]">{selectedProject.name}</h1>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#4f2ab7]">Project</p>
+                  <h1 className="mb-0 font-fraunces text-[clamp(1.5rem,3vw,2.3rem)] font-bold tracking-[-0.01em] text-[#24183a]">{selectedProject.name}</h1>
                 </div>
                 <button
                   type="button"
-                  className="cursor-pointer rounded-full border border-[#24183a24] bg-white px-4 py-2 text-sm font-bold text-[#24183a] transition-transform duration-200 hover:-translate-y-px"
+                  className="cursor-pointer rounded-lg border border-[#24183a24] bg-white px-4 py-2 text-sm font-semibold text-[#24183a] transition-transform duration-200 hover:-translate-y-px"
                   onClick={() => navigate("/portfolio")}
                 >
                   Back to projects
@@ -212,7 +212,7 @@ export function PortfolioPage() {
                             }
                             aria-expanded={isOpen}
                           >
-                            <span className="text-base font-bold capitalize text-[#24183a]">{section.name}</span>
+                            <span className="font-fraunces text-base font-semibold capitalize text-[#24183a]">{section.name}</span>
                             <span className="text-xl font-bold leading-none text-[#4f2ab7]">{isOpen ? "-" : "+"}</span>
                           </button>
                           <div
