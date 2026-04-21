@@ -2,7 +2,12 @@
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
   theme: {
-    extend: {}
+    extend: {
+      fontFamily: {
+        sans: ["DM Sans", "Avenir Next", "Segoe UI", "sans-serif"],
+        fraunces: ["Fraunces", "Georgia", "serif"]
+      }
+    }
   },
   plugins: []
 };
