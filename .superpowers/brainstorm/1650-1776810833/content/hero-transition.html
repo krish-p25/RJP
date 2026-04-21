@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero Transition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e8e3f5; font-family: 'DM Sans', system-ui, sans-serif; padding: 24px; color: #1a1330; }
+  h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { color: #6b5f8a; font-size: 14px; margin-bottom: 28px; line-height: 1.5; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+  .card { background: white; border-radius: 16px; overflow: hidden; border: 2.5px solid transparent; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 20px rgba(79,42,183,0.1); }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(79,42,183,0.18); }
+  .card.selected { border-color: #6c3fe1; box-shadow: 0 0 0 4px rgba(108,63,225,0.15); }
+  .card-image { overflow: hidden; }
+  .card-body { padding: 16px 18px; border-top: 1px solid #ede8fb; }
+  .card-body h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; color: #1a1330; }
+  .card-body p { font-size: 13px; color: #6b5f8a; line-height: 1.5; }
+</style>
+</head>
+<body>
+<h2>How should the slideshow flow into the page?</h2>
+<p class="subtitle">Currently the hero is a hard-cut full-screen image that stops abruptly. These show three ways to make it feel like one continuous design. Logo placement is also shown in each.</p>
+
+<div class="cards">
+
+  <!-- Option A: Gradient fade into page bg -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="position:relative; height:360px; overflow:hidden;">
+        <!-- Hero photo simulation -->
+        <div style="position:absolute; inset:0; background:linear-gradient(135deg, #2d2040 0%, #1a1030 40%, #3d2860 100%);"></div>
+        <!-- Photo texture overlay -->
+        <div style="position:absolute; inset:0; opacity:0.3; background:repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px);"></div>
+        <!-- Nav bar -->
+        <div style="position:absolute; top:0; left:0; right:0; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(180deg,rgba(0,0,0,0.35) 0%,transparent 100%);">
+          <span style="color:rgba(255,255,255,0.95); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; letter-spacing:0.02em;">RJP Innovations</span>
+          <span style="color:rgba(255,255,255,0.7); font-size:12px; font-family:'DM Sans',sans-serif;">Portfolio &nbsp; Contact</span>
+        </div>
+        <!-- Logo bottom-left -->
+        <div style="position:absolute; bottom:80px; left:20px; right:20px;">
+          <div style="background:rgba(255,255,255,0.1); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.2); border-radius:14px; padding:14px 16px; display:inline-flex; align-items:center; gap:12px;">
+            <div style="width:44px; height:44px; background:white; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+              <div style="width:30px; height:30px; background:linear-gradient(135deg,#6c3fe1,#4f2ab7); border-radius:6px;"></div>
+            </div>
+            <div>
+              <div style="color:white; font-family:'Fraunces',serif; font-size:15px; font-weight:700; line-height:1;">RJP Innovations</div>
+              <div style="color:rgba(255,255,255,0.6); font-size:10px; font-family:'DM Sans',sans-serif; margin-top:2px; letter-spacing:0.06em; text-transform:uppercase;">London · Est. 2010</div>
+            </div>
+          </div>
+        </div>
+        <!-- Gradient fade to page -->
+        <div style="position:absolute; bottom:0; left:0; right:0; height:100px; background:linear-gradient(0deg, #f8f5ff 0%, transparent 100%);"></div>
+        <!-- Dot indicators -->
+        <div style="position:absolute; bottom:18px; left:50%; transform:translateX(-50%); display:flex; gap:6px;">
+          <div style="width:20px; height:3px; background:#6c3fe1; border-radius:2px;"></div>
+          <div style="width:6px; height:3px; background:rgba(255,255,255,0.4); border-radius:2px;"></div>
+          <div style="width:6px; height:3px; background:rgba(255,255,255,0.4); border-radius:2px;"></div>
+        </div>
+      </div>
+      <!-- Content below -->
+      <div style="background:#f8f5ff; padding:18px 20px 20px;">
+        <div style="font-family:'DM Sans',sans-serif; font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:#6c3fe1; margin-bottom:8px;">Building Contractor · Renovation</div>
+        <div style="font-family:'Fraunces',serif; font-size:26px; font-weight:700; line-height:1.05; color:#1a1330; margin-bottom:10px;">Built Perfect.<br>Finished Better.</div>
+        <div style="display:flex; gap:8px;">
+          <div style="background:#6c3fe1; color:white; padding:8px 16px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600;">View Portfolio</div>
+          <div style="border:1.5px solid rgba(36,24,58,0.18); padding:8px 16px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:11px; color:#1a1330;">Contact Us</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Gradient fade + logo bottom-left</h3>
+      <p>The photo fades directly into the page background colour — no hard edge. Logo moves from centre to a glass card at the bottom-left of the hero. Feels like one continuous page.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Overlapping content card -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="position:relative; overflow:hidden;">
+        <!-- Hero photo simulation -->
+        <div style="height:260px; background:linear-gradient(135deg, #2d2040 0%, #1a1030 40%, #3d2860 100%); position:relative; overflow:hidden;">
+          <div style="position:absolute; inset:0; opacity:0.25; background:repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px);"></div>
+          <!-- Nav -->
+          <div style="position:absolute; top:0; left:0; right:0; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(180deg,rgba(0,0,0,0.35) 0%,transparent 100%);">
+            <span style="color:rgba(255,255,255,0.95); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600;">RJP Innovations</span>
+            <span style="color:rgba(255,255,255,0.7); font-size:12px; font-family:'DM Sans',sans-serif;">Portfolio &nbsp; Contact</span>
+          </div>
+          <!-- Logo centred, smaller -->
+          <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;">
+            <div style="width:58px; height:58px; background:white; border-radius:14px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(0,0,0,0.3);">
+              <div style="width:40px; height:40px; background:linear-gradient(135deg,#6c3fe1,#4f2ab7); border-radius:8px;"></div>
+            </div>
+            <div style="color:rgba(255,255,255,0.55); font-size:10px; font-family:'DM Sans',sans-serif; letter-spacing:0.12em; text-transform:uppercase;">Scroll to explore</div>
+          </div>
+          <!-- Dot indicators -->
+          <div style="position:absolute; bottom:14px; left:50%; transform:translateX(-50%); display:flex; gap:6px;">
+            <div style="width:20px; height:3px; background:white; border-radius:2px; opacity:0.9;"></div>
+            <div style="width:6px; height:3px; background:rgba(255,255,255,0.35); border-radius:2px;"></div>
+            <div style="width:6px; height:3px; background:rgba(255,255,255,0.35); border-radius:2px;"></div>
+          </div>
+        </div>
+        <!-- Overlapping card -->
+        <div style="background:#f8f5ff; padding:0 16px 16px;">
+          <div style="background:white; border-radius:16px; padding:20px; margin-top:-36px; position:relative; box-shadow:0 -4px 40px rgba(79,42,183,0.12), 0 8px 24px rgba(79,42,183,0.08); border:1px solid rgba(108,63,225,0.1);">
+            <div style="font-family:'DM Sans',sans-serif; font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:#6c3fe1; margin-bottom:8px;">Building Contractor · London</div>
+            <div style="font-family:'Fraunces',serif; font-size:24px; font-weight:700; line-height:1.1; color:#1a1330; margin-bottom:10px;">Built Perfect.<br>Finished Better.</div>
+            <div style="display:flex; gap:8px; margin-top:14px;">
+              <div style="background:#6c3fe1; color:white; padding:8px 16px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600;">View Portfolio</div>
+              <div style="border:1.5px solid rgba(36,24,58,0.18); padding:8px 16px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:11px; color:#1a1330;">Contact Us</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Overlapping content card</h3>
+      <p>The hero photo stays full-bleed. A white card slides up and overlaps the photo — creating depth. Logo stays centred but smaller. Clean split between photo world and content world.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Full-bleed hero with text over image -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="position:relative; overflow:hidden;">
+        <!-- Hero photo simulation, taller -->
+        <div style="height:320px; background:linear-gradient(135deg, #2d2040 0%, #1a1030 40%, #3d2860 100%); position:relative; overflow:hidden;">
+          <div style="position:absolute; inset:0; opacity:0.25; background:repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px);"></div>
+          <!-- Nav -->
+          <div style="position:absolute; top:0; left:0; right:0; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(180deg,rgba(0,0,0,0.35) 0%,transparent 100%);">
+            <span style="color:rgba(255,255,255,0.95); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600;">RJP Innovations</span>
+            <span style="color:rgba(255,255,255,0.7); font-size:12px; font-family:'DM Sans',sans-serif;">Portfolio &nbsp; Contact</span>
+          </div>
+          <!-- Logo top-right of hero content area, text bottom-left -->
+          <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end; padding:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+              <div>
+                <div style="color:rgba(255,255,255,0.6); font-size:9px; font-family:'DM Sans',sans-serif; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:6px;">Building Contractor · London</div>
+                <div style="color:white; font-family:'Fraunces',serif; font-size:28px; font-weight:700; line-height:1.05; text-shadow:0 2px 16px rgba(0,0,0,0.4);">Built Perfect.<br>Finished Better.</div>
+              </div>
+              <div style="width:52px; height:52px; background:white; border-radius:12px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(0,0,0,0.3); flex-shrink:0; margin-left:12px; margin-bottom:2px;">
+                <div style="width:36px; height:36px; background:linear-gradient(135deg,#6c3fe1,#4f2ab7); border-radius:7px;"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Dot indicators -->
+          <div style="position:absolute; bottom:70px; right:20px; display:flex; flex-direction:column; gap:6px;">
+            <div style="width:3px; height:20px; background:white; border-radius:2px; opacity:0.9;"></div>
+            <div style="width:3px; height:6px; background:rgba(255,255,255,0.35); border-radius:2px;"></div>
+            <div style="width:3px; height:6px; background:rgba(255,255,255,0.35); border-radius:2px;"></div>
+          </div>
+          <!-- Bottom gradient + CTA strip -->
+          <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(0deg,rgba(0,0,0,0.5) 0%, transparent 100%); padding:12px 20px; display:flex; gap:8px; align-items:center;">
+            <div style="background:#6c3fe1; color:white; padding:8px 16px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600;">View Portfolio</div>
+            <div style="border:1.5px solid rgba(255,255,255,0.35); color:rgba(255,255,255,0.9); padding:8px 16px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:11px;">Contact Us</div>
+          </div>
+        </div>
+        <!-- Content starts cleanly below -->
+        <div style="background:#f8f5ff; padding:16px 20px;">
+          <div style="font-family:'DM Sans',sans-serif; font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:#6c3fe1; margin-bottom:8px;">Our Services</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+            <div style="background:white; border-radius:10px; padding:10px; border:1px solid rgba(79,42,183,0.1);">
+              <div style="width:14px; height:2px; background:#6c3fe1; margin-bottom:6px;"></div>
+              <div style="font-family:'Fraunces',serif; font-size:11px; font-weight:600; color:#1a1330;">Renovation</div>
+            </div>
+            <div style="background:white; border-radius:10px; padding:10px; border:1px solid rgba(79,42,183,0.1);">
+              <div style="width:14px; height:2px; background:#6c3fe1; margin-bottom:6px;"></div>
+              <div style="font-family:'Fraunces',serif; font-size:11px; font-weight:600; color:#1a1330;">Structural</div>
+            </div>
+            <div style="background:white; border-radius:10px; padding:10px; border:1px solid rgba(79,42,183,0.1);">
+              <div style="width:14px; height:2px; background:#6c3fe1; margin-bottom:6px;"></div>
+              <div style="font-family:'Fraunces',serif; font-size:11px; font-weight:600; color:#1a1330;">Finishes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Text & logo live inside the hero</h3>
+      <p>Headline text and logo both sit inside the photo. CTAs sit at the bottom of the hero, right on the image. Below the hero, clean content starts immediately. Hero does more work, page below is simpler.</p>
+    </div>
+  </div>
+
+</div>
+
+<p style="font-family:'DM Sans',sans-serif; font-size:13px; color:#6b5f8a; margin-top:20px;">Click your preferred layout. If you like parts of multiple, tell me in the terminal.</p>
+
+<script>
+function toggleSelect(el) {
+  const wasSelected = el.classList.contains('selected');
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+  if (!wasSelected) el.classList.add('selected');
+}
+</script>
+</body>
+</html>
