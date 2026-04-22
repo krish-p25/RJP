@@ -79,6 +79,42 @@
     animation: kenBurnsPanRight 18s ease-in-out infinite alternate;
   }
 
+  /* Glare sweep animations for contact section highlight */
+  .glare-section {
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    height: 200%;
+    width: 48%;
+    transform: skewX(-18deg);
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.22) 50%, transparent 100%);
+    animation: glare-sweep 0.78s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .glare-button {
+    position: absolute;
+    top: -50%;
+    left: -80%;
+    height: 200%;
+    width: 65%;
+    transform: skewX(-18deg);
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.42) 50%, transparent 100%);
+    animation: glare-sweep 0.72s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  @keyframes glare-sweep {
+    from {
+      left: -80%;
+    }
+    to {
+      left: 130%;
+    }
+  }
+
   @keyframes kenBurnsZoomIn {
     0% {
       transform: scale(1) translate(0, 0);
