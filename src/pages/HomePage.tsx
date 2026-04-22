@@ -6,6 +6,7 @@ import { ABOUT_PARAGRAPHS, CAROUSEL_INTERVAL_MS, LOGO_RESTORE_DELAY_MS, SERVICES
 export function HomePage() {
   const location = useLocation();
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
+  const [glareStage, setGlareStage] = useState<"idle" | "section" | "button">("idle");
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [isIntroLogoVisible, setIsIntroLogoVisible] = useState(true);
   const logoRestoreTimerRef = useRef<number | null>(null);
@@ -64,6 +65,15 @@ export function HomePage() {
       const contactSection = document.getElementById("contact");
       if (contactSection) {
         setTimeout(() => contactSection.scrollIntoView({ behavior: "smooth" }), 100);
+        // Glare sequence: section first, then button after section glare completes
+        const t1 = window.setTimeout(() => setGlareStage("section"), 800);
+        const t2 = window.setTimeout(() => setGlareStage("button"), 1700);
+        const t3 = window.setTimeout(() => setGlareStage("idle"), 2550);
+        return () => {
+          window.clearTimeout(t1);
+          window.clearTimeout(t2);
+          window.clearTimeout(t3);
+        };
       }
     }
   }, [location.hash]);
@@ -260,7 +270,8 @@ export function HomePage() {
           </section>
 
           <section id="contact" className="reveal pt-[clamp(2rem,5vw,4rem)]">
-            <div className="rounded-[16px] border border-[rgba(108,63,225,0.1)] bg-white p-[clamp(1.4rem,4vw,2rem)] shadow-[0_2px_16px_rgba(79,42,183,0.08)] sm:flex sm:items-center sm:justify-between sm:gap-8">
+            <div className="relative overflow-hidden rounded-[16px] border border-[rgba(108,63,225,0.1)] bg-white p-[clamp(1.4rem,4vw,2rem)] shadow-[0_2px_16px_rgba(79,42,183,0.08)] sm:flex sm:items-center sm:justify-between sm:gap-8">
+              {glareStage === "section" && <div aria-hidden="true" className="glare-section" />}
               <div>
                 <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#4f2ab7]">Let&apos;s Build</p>
                 <h2 className="mb-3 font-fraunces text-[clamp(1.4rem,2.8vw,2rem)] font-bold tracking-[-0.01em] text-[#24183a]">
@@ -271,11 +282,12 @@ export function HomePage() {
                 </p>
               </div>
               <a
-                className="inline-block shrink-0 rounded-lg bg-[#6c3fe1] px-5 py-3 text-sm font-semibold text-white no-underline transition-transform duration-200 hover:-translate-y-px hover:bg-[#4f2ab7]"
+                className="relative inline-block shrink-0 overflow-hidden rounded-lg bg-[#6c3fe1] px-5 py-3 text-sm font-semibold text-white no-underline transition-transform duration-200 hover:-translate-y-px hover:bg-[#4f2ab7]"
                 href="https://api.whatsapp.com/send/?phone=447957306323&text=Hi%2C%20I%27m%20looking%20for%20a%20quote%20for%20some%20work%20on%20my%20property.%20Could%20you%20let%20me%20know%20if%20you%27re%20available%20to%20discuss%3F&type=phone_number&app_absent=0"
                 target="_blank"
                 rel="noreferrer"
               >
+                {glareStage === "button" && <span aria-hidden="true" className="glare-button" />}
                 Message on WhatsApp
               </a>
             </div>
