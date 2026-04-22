@@ -1,16 +1,18 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useScrolledState } from "../hooks/useScrolledState";
 import { HEADER_BASE_CLASSES, HEADER_SCROLLED_CLASSES, HEADER_TOP_CLASSES } from "../constants";
 
 export function SiteHeader() {
   const isScrolled = useScrolledState();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const scrollToContact = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
     if (location.pathname !== "/") {
+      navigate("/#contact");
       return;
     }
-    e.preventDefault();
     const contactSection = document.getElementById("contact");
     if (contactSection) {
       contactSection.scrollIntoView({ behavior: "smooth" });
