@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { imageManifest } from "../imageManifest";
 import { ABOUT_PARAGRAPHS, CAROUSEL_INTERVAL_MS, LOGO_RESTORE_DELAY_MS, SERVICES } from "../constants";
 
 export function HomePage() {
+  const location = useLocation();
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [isIntroLogoVisible, setIsIntroLogoVisible] = useState(true);
@@ -57,6 +58,15 @@ export function HomePage() {
     },
     [carouselImages.length, restartAutoAdvance]
   );
+
+  useEffect(() => {
+    if (location.hash === "#contact") {
+      const contactSection = document.getElementById("contact");
+      if (contactSection) {
+        setTimeout(() => contactSection.scrollIntoView({ behavior: "smooth" }), 100);
+      }
+    }
+  }, [location.hash]);
 
   useEffect(() => {
     const items = document.querySelectorAll<HTMLElement>(".reveal");
