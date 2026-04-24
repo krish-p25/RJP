@@ -4,6 +4,15 @@ import { imageManifest } from "../imageManifest";
 import { ABOUT_PARAGRAPHS, CAROUSEL_INTERVAL_MS, LOGO_RESTORE_DELAY_MS, SERVICES } from "../constants";
 import { getProjectCoverImage, getProjectImageCount } from "../utils/projectHelpers";
 
+// Hand-picked best cover image per project (overrides auto-selected thumbnail)
+const PROJECT_BEST_COVERS: Record<string, string> = {
+  "Ealing, London W5": "/projects/Ealing, London W5/2.jpg",
+  "Hammersmith and Fulham": "/projects/Hammersmith and Fulham/3.jpg",
+  "Maida Vale, London": "/projects/Maida Vale, London/6.jpg",
+  "Mayo Court, London":
+    "/projects/Mayo Court, London/after/Mayo_Court_Northcroft_Road_02092022_234543(1).jpg"
+};
+
 export function HomePage() {
   const location = useLocation();
   const [isAboutExpanded, setIsAboutExpanded] = useState(false);
@@ -274,7 +283,7 @@ export function HomePage() {
                 Mobile: 2-col equal grid                            */}
             <div className="grid grid-cols-2 gap-3 lg:h-[520px] lg:grid-cols-3 lg:grid-rows-2">
               {projectGroups.map((project, index) => {
-                const thumbnail = getProjectCoverImage(project);
+                const thumbnail = PROJECT_BEST_COVERS[project.name] ?? getProjectCoverImage(project);
                 const count = getProjectImageCount(project);
 
                 const bentoClass = [
@@ -289,7 +298,9 @@ export function HomePage() {
                     key={project.name}
                     to={`/portfolio/${encodeURIComponent(project.name)}`}
                     className={[
-                      "group relative block aspect-[4/3] overflow-hidden rounded-[16px] no-underline lg:aspect-auto",
+                      // Portrait aspect on mobile gives enough height for the label to sit cleanly;
+                      // desktop uses the explicit grid height instead.
+                      "group relative block aspect-[4/5] overflow-hidden rounded-[16px] no-underline lg:aspect-auto",
                       bentoClass
                     ].join(" ")}
                   >
@@ -304,12 +315,12 @@ export function HomePage() {
                     )}
 
                     {/* Gradient overlay — lifts slightly on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[rgba(12,6,24,0.86)] via-[rgba(12,6,24,0.26)] to-[rgba(12,6,24,0.08)] transition-all duration-500 group-hover:from-[rgba(12,6,24,0.65)] group-hover:via-[rgba(12,6,24,0.16)]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[rgba(12,6,24,0.88)] via-[rgba(12,6,24,0.3)] to-[rgba(12,6,24,0.08)] transition-all duration-500 group-hover:from-[rgba(12,6,24,0.65)] group-hover:via-[rgba(12,6,24,0.16)]" />
 
-                    {/* Corner bracket — top right */}
+                    {/* Corner bracket — top right (shown on all sizes) */}
                     <div className="absolute right-3 top-3 h-[14px] w-[14px] border-r border-t border-white/30 transition-colors duration-300 group-hover:border-[#b69bff]/80" />
-                    {/* Corner bracket — bottom left */}
-                    <div className="absolute bottom-[4.5rem] left-3 h-[14px] w-[14px] border-b border-l border-white/30 transition-colors duration-300 group-hover:border-[#b69bff]/80" />
+                    {/* Corner bracket — bottom left (desktop only — too close to text on small cards) */}
+                    <div className="absolute bottom-[4.5rem] left-3 hidden h-[14px] w-[14px] border-b border-l border-white/30 transition-colors duration-300 group-hover:border-[#b69bff]/80 lg:block" />
 
                     {/* Photo count badge — top left */}
                     <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-black/30 px-2.5 py-1 backdrop-blur-sm">
@@ -318,12 +329,13 @@ export function HomePage() {
                       </span>
                     </div>
 
-                    {/* Bottom info bar */}
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <p className="font-fraunces text-[clamp(0.95rem,1.6vw,1.15rem)] font-semibold leading-snug text-white drop-shadow-[0_1px_6px_rgba(0,0,0,0.6)]">
+                    {/* Bottom info bar — tighter padding on mobile so text sits flush */}
+                    <div className="absolute bottom-0 left-0 right-0 p-3 lg:p-4">
+                      <p className="line-clamp-1 font-fraunces text-sm font-semibold leading-snug text-white drop-shadow-[0_1px_6px_rgba(0,0,0,0.6)] lg:line-clamp-none lg:text-[clamp(0.95rem,1.6vw,1.15rem)]">
                         {project.name}
                       </p>
-                      <div className="mt-1.5 flex items-center justify-between">
+                      {/* View project hint — desktop hover only */}
+                      <div className="mt-1.5 hidden items-center justify-between lg:flex">
                         <span className="translate-y-2 text-[11px] font-medium tracking-[0.06em] text-white/55 opacity-0 transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:translate-y-0 group-hover:opacity-100">
                           View project
                         </span>
