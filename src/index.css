@@ -96,12 +96,12 @@
   .glare-button {
     position: absolute;
     top: -50%;
-    left: -80%;
+    left: 130%;
     height: 200%;
     width: 65%;
-    transform: skewX(-18deg);
+    transform: skewX(18deg);
     background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.42) 50%, transparent 100%);
-    animation: glare-sweep 0.72s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: glare-sweep-rtl 0.72s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     pointer-events: none;
     z-index: 10;
   }
@@ -112,6 +112,15 @@
     }
     to {
       left: 130%;
+    }
+  }
+
+  @keyframes glare-sweep-rtl {
+    from {
+      left: 130%;
+    }
+    to {
+      left: -80%;
     }
   }
 
