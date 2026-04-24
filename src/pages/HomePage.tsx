@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { imageManifest } from "../imageManifest";
 import { ABOUT_PARAGRAPHS, CAROUSEL_INTERVAL_MS, LOGO_RESTORE_DELAY_MS, SERVICES } from "../constants";
+import { getProjectCoverImage, getProjectImageCount } from "../utils/projectHelpers";
 
 export function HomePage() {
   const location = useLocation();
@@ -11,6 +12,8 @@ export function HomePage() {
   const [isIntroLogoVisible, setIsIntroLogoVisible] = useState(true);
   const logoRestoreTimerRef = useRef<number | null>(null);
   const autoAdvanceIntervalRef = useRef<number | null>(null);
+
+  const projectGroups = useMemo(() => imageManifest.projects, []);
 
   const carouselImages = useMemo(() => {
     if (imageManifest.carousel.length > 0) {
@@ -245,6 +248,99 @@ export function HomePage() {
 
         {/* Services + Contact */}
         <div className="mx-auto w-[min(1100px,calc(100%-2rem))] max-[640px]:w-[calc(100%-1rem)]">
+          {/* ── Projects bento showcase ── */}
+          <section className="reveal mt-0 pt-[clamp(2rem,5vw,4rem)]">
+            <div className="mb-5 flex items-end justify-between">
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#4f2ab7]">
+                  Featured Work
+                </p>
+                <h2 className="font-fraunces text-[clamp(1.4rem,2.8vw,2.2rem)] font-bold tracking-[-0.01em] text-[#24183a]">
+                  Recent Projects
+                </h2>
+              </div>
+              <Link
+                to="/portfolio"
+                className="flex items-center gap-1 text-sm font-semibold text-[#4f2ab7] no-underline opacity-80 transition-opacity duration-200 hover:opacity-100"
+              >
+                View all <span aria-hidden="true" className="text-base">→</span>
+              </Link>
+            </div>
+
+            {/* Asymmetric bento grid
+                Desktop (3 col, 2 row):
+                  [Ealing — col-span-2] [Hammersmith — row-span-2]
+                  [Maida Vale]          [Mayo Court]
+                Mobile: 2-col equal grid                            */}
+            <div className="grid grid-cols-2 gap-3 lg:h-[520px] lg:grid-cols-3 lg:grid-rows-2">
+              {projectGroups.map((project, index) => {
+                const thumbnail = getProjectCoverImage(project);
+                const count = getProjectImageCount(project);
+
+                const bentoClass = [
+                  index === 0 ? "lg:col-span-2" : "",
+                  index === 1 ? "lg:row-span-2" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ");
+
+                return (
+                  <Link
+                    key={project.name}
+                    to={`/portfolio/${encodeURIComponent(project.name)}`}
+                    className={[
+                      "group relative block aspect-[4/3] overflow-hidden rounded-[16px] no-underline lg:aspect-auto",
+                      bentoClass
+                    ].join(" ")}
+                  >
+                    {/* Photo */}
+                    {thumbnail && (
+                      <img
+                        src={thumbnail}
+                        alt={`${project.name} renovation project`}
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:scale-[1.05]"
+                        loading="lazy"
+                      />
+                    )}
+
+                    {/* Gradient overlay — lifts slightly on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[rgba(12,6,24,0.86)] via-[rgba(12,6,24,0.26)] to-[rgba(12,6,24,0.08)] transition-all duration-500 group-hover:from-[rgba(12,6,24,0.65)] group-hover:via-[rgba(12,6,24,0.16)]" />
+
+                    {/* Corner bracket — top right */}
+                    <div className="absolute right-3 top-3 h-[14px] w-[14px] border-r border-t border-white/30 transition-colors duration-300 group-hover:border-[#b69bff]/80" />
+                    {/* Corner bracket — bottom left */}
+                    <div className="absolute bottom-[4.5rem] left-3 h-[14px] w-[14px] border-b border-l border-white/30 transition-colors duration-300 group-hover:border-[#b69bff]/80" />
+
+                    {/* Photo count badge — top left */}
+                    <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-black/30 px-2.5 py-1 backdrop-blur-sm">
+                      <span className="text-[10px] font-medium tracking-[0.08em] text-white/70">
+                        {count} photos
+                      </span>
+                    </div>
+
+                    {/* Bottom info bar */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <p className="font-fraunces text-[clamp(0.95rem,1.6vw,1.15rem)] font-semibold leading-snug text-white drop-shadow-[0_1px_6px_rgba(0,0,0,0.6)]">
+                        {project.name}
+                      </p>
+                      <div className="mt-1.5 flex items-center justify-between">
+                        <span className="translate-y-2 text-[11px] font-medium tracking-[0.06em] text-white/55 opacity-0 transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:translate-y-0 group-hover:opacity-100">
+                          View project
+                        </span>
+                        <span className="translate-x-1 text-sm text-white/70 opacity-0 transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover:translate-x-0 group-hover:opacity-100">
+                          →
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Inset ring on hover */}
+                    <div className="absolute inset-0 rounded-[16px] ring-1 ring-inset ring-transparent transition-all duration-300 group-hover:ring-[rgba(108,63,225,0.45)]" />
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+
           <section id="process" className="reveal mt-0 pt-[clamp(2rem,5vw,4rem)]">
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#4f2ab7]">
